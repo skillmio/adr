@@ -1,11 +1,14 @@
+<div align="center">
+  <h1>Auto-Deploy Role (adr)</h1>
+  <h3>
+    A Linux automation tool that saves you time by deploying services in one command
+  </h3>
 
-**ADR (Auto-Deploy Role)** provides modular Linux deployment roles inspired by Windows PowerShell’s `Install-WindowsFeature`.
+  <a href="https://github.com/skillmio/adr/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/skillmio/adr" alt="License">
+  </a>
 
-With simple commands like:
-
-```bash
-adr zabbix
-adr wordpress
-```
-
-you can automatically **install, configure, and secure** services on Linux systems. ADR simplifies Linux service deployment, making it fast, consistent, and repeatable.
+  <p>
+    <code>adr zabbix</code> · <code>adr wordpress</code> · <code>adr docker</code>
+  </p>
+</div>
