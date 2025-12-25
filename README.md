@@ -34,7 +34,7 @@ ADR is inspired by PowerShell’s `Install-WindowsFeature`, bringing the same **
 
 Whether you are managing servers, running a homelab, or automating deployments, ADR makes service deployment faster and more reliable.
 
-## Features
+### Features
 
 * **One-command role deployment**
   Deploy services like WordPress, GLPI, or BookStack with a single command.
@@ -51,7 +51,7 @@ Whether you are managing servers, running a homelab, or automating deployments, 
 * **Automation-friendly**
   Easy to use interactively and easy to integrate into scripts or automation pipelines.
 
-## Benefits
+### Benefits
 
 * **Save time** by avoiding manual setup and troubleshooting
 * **Reduce complexity** with clear, predictable deployments
