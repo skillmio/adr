@@ -9,6 +9,6 @@
   </a>
 
   <p>
-    <code>adr zabbix</code> · <code>adr wordpress</code> · <code>adr docker</code>
+    <code>adr zabbix</code> · <code>adr wordpress</code> · <code>adr glpi</code>
   </p>
 </div>
