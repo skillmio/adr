@@ -1,4 +1,11 @@
 <h1 align="center">Auto-Deploy Role (adr)</h1>
+
+<p align="center">
+  <strong>Auto-Deploy Role</strong><br>
+  Modular Linux deployment roles inspired by PowerShell’s
+  <code>Install-WindowsFeature</code>
+</p>
+
 **ADR (Auto-Deploy Role)** provides modular Linux deployment roles inspired by Windows PowerShell’s `Install-WindowsFeature`.
 
 With simple commands like:
