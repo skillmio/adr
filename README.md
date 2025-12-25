@@ -11,4 +11,10 @@
   <p>
     <code>adr wordpress</code> · <code>adr glpi</code> · <code>adr bookstack</code>
   </p>
+
+  <img
+    src="https://github.com/skillmio/adr/blob/main/adr-image.png?raw=true"
+    alt="ADR example"
+    width="80%"
+  />
 </div>
