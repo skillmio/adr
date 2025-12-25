@@ -1,7 +1,7 @@
 <div align="center">
   <h1>Auto-Deploy Role (adr)</h1>
   <h3>
-    A Linux automation tool that saves you time by deploying services in one command
+    A Linux automation tool that saves you time by deploying roles in one command
   </h3>
 
   <a href="https://github.com/skillmio/adr/blob/main/LICENSE">
