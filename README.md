@@ -1,7 +1,7 @@
 <div align="center">
   <h1>Auto-Deploy Role (adr)</h1>
   <h3>
-    A Linux automation tool that saves you time by deploying roles in one command
+    A Linux automation tool that saves you time by deploying roles with one command
   </h3>
 
   <a href="https://github.com/skillmio/adr/blob/main/LICENSE">
@@ -9,6 +9,6 @@
   </a>
 
   <p>
-    <code>adr zabbix</code> · <code>adr wordpress</code> · <code>adr glpi</code>
+    <code>adr wordpress</code> · <code>adr glpi</code> · <code>adr bookstack</code>
   </p>
 </div>
