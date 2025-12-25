@@ -17,4 +17,9 @@
     alt="ADR example"
     width="80%"
   />
+
+  <p>
+    Installation of WordPress with ADR
+  </p>
 </div>
+
