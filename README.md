@@ -23,11 +23,6 @@
   </p>
 </div>
 
-Here’s the **exact content to add below that header block** in your README.
-It’s written to be **clear, benefit-focused, and beginner-friendly**, while still sounding professional.
-
-You can paste everything **directly after your `</div>`**.
-
 ---
 
 ## Intro
