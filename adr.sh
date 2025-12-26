@@ -4,14 +4,16 @@
 # ADR — Auto-Deploy Role
 # ==========================
 
-CURRENT_VERSION="0.1.1"
+CURRENT_VERSION="0.1.2"
 
 REPO_OWNER="skillmio"
 REPO_NAME="adr"
 BRANCH="main"
 
 RAW_BASE_URL="https://raw.githubusercontent.com/$REPO_OWNER/$REPO_NAME/$BRANCH"
-API_URL="https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents"
+API_BASE_URL="https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents"
+
+ROLES_DIR="roles"
 
 DISTRO_SUFFIX=""
 
@@ -101,11 +103,16 @@ fuzzy_match() {
   [ $i -eq ${#pattern} ]
 }
 
+# === FETCH ROLES FROM GITHUB ===
+fetch_roles() {
+  curl -fsSL "$API_BASE_URL/$ROLES_DIR" | grep '"name":' | grep '.sh' | cut -d '"' -f 4
+}
+
 # === LIST AVAILABLE ROLES ===
 list_available_roles() {
   echo "Fetching available ADR roles..."
 
-  roles=$(curl -fsSL "$API_URL" | grep '"name":' | grep '.sh' | cut -d '"' -f 4 | grep -v '^adr.sh$')
+  roles=$(fetch_roles)
 
   echo
   echo "==========================================================="
@@ -139,7 +146,7 @@ find_role() {
 
   echo "Searching ADR roles for: '$query'"
 
-  roles=$(curl -fsSL "$API_URL" | grep '"name":' | grep '.sh' | cut -d '"' -f 4 | grep -v '^adr.sh$')
+  roles=$(fetch_roles)
 
   matches=()
   for role in $roles; do
@@ -178,7 +185,7 @@ run_role() {
     role_script="${role}.sh"
   fi
 
-  script_url="$RAW_BASE_URL/$role_script"
+  script_url="$RAW_BASE_URL/$ROLES_DIR/$role_script"
   tmp_file=$(mktemp "/tmp/${role}.XXXXXX.sh")
 
   echo "Downloading role: $role"
