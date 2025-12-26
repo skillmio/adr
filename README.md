@@ -59,4 +59,77 @@ Whether you are managing servers, running a homelab, or automating deployments, 
 * **Faster service delivery** from fresh system to running service
 * **Safer defaults** with built-in configuration and best practices
 
+---
+
+## Installation
+
+Install ADR by downloading the launcher script and placing it in your system path:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/skillmio/adr/main/adr.sh -o /tmp/adr && \
+chmod +x /tmp/adr && \
+sudo mv /tmp/adr /usr/local/bin/adr
+```
+
+Once installed, the `adr` command will be available system-wide.
+
+You can verify the installation with:
+
+```bash
+adr --help
+```
+
+---
+
+## Usage
+
+ADR allows you to deploy services using a single command.
+
+### Deploy a role
+
+```bash
+adr wordpress
+```
+
+Other examples:
+
+```bash
+adr glpi
+adr bookstack
+```
+
+Each role automatically handles:
+
+* Package installation
+* Service configuration
+* Sensible defaults and basic security
+
+---
+
+### List available roles
+
+To see all available roles for your system:
+
+```bash
+adr --list
+```
+
+
+### Help
+
+To display usage information:
+
+```bash
+adr --help
+```
+
+### Notes
+
+* ADR is designed for **AlmaLinux and RHEL-compatible distributions**
+* Root privileges are required to install and configure services
+* Roles are selected automatically based on your OS version
+
+---
+
+
 
