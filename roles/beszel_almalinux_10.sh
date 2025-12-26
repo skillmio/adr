@@ -16,11 +16,12 @@ function info_msg() {
   echo "$1" | tee -a "$LOGPATH"
 }
 
-# === LOAD ADR LOCALES ===
-ADR_LANG="${ADR_LANG:-pt}"  # Default to pt if not set
+# === DETECT ADR LANG SETTING ===
+ADR_LANG="${ADR_LANG:-en}"  # Default to English if ADR_LANG is not set
+
 ADR_LOCALES_BASE="${HOME}/.config/adr/locales"
 
-# Check if the selected language file exists
+# Ensure that the correct messages.sh file is sourced based on ADR_LANG
 if [[ -f "${ADR_LOCALES_BASE}/${ADR_LANG}/messages.sh" ]]; then
   source "${ADR_LOCALES_BASE}/${ADR_LANG}/messages.sh"
 else
@@ -44,10 +45,12 @@ function run_collect_config() {
   echo
 
   # Prompting without redirection (correct language prompts)
-  read -p "${MSG_PROMPT_IP} (${DEFAULT_IP}): " SERVER_IP
+  echo -n "${MSG_PROMPT_IP} (${DEFAULT_IP}): "
+  read SERVER_IP
   SERVER_IP="${SERVER_IP:-$DEFAULT_IP}"
 
-  read -p "${MSG_PROMPT_URL} (${DEFAULT_FQDN}): " ACCESS_URL
+  echo -n "${MSG_PROMPT_URL} (${DEFAULT_FQDN}): "
+  read ACCESS_URL
   ACCESS_URL="${ACCESS_URL:-$DEFAULT_FQDN}"
 
   info_msg "${MSG_USING_IP}: ${SERVER_IP}"
@@ -185,12 +188,4 @@ run_services >>"$LOGPATH" 2>&1
 info_msg "[9/9] ${MSG_STEP_FIREWALL}"
 run_firewall >>"$LOGPATH" 2>&1
 
-# === SAVE THIS INFORMATION ===
-info_msg "--------------------------------------------------"
-info_msg "${MSG_SAVE_HEADER}"
-info_msg "${MSG_SAVE_VERSION}: v${version}"
-info_msg "${MSG_SAVE_PATH}: ${INSTALL_DIR}"
-info_msg "${MSG_SAVE_SERVICE}: beszel-hub.service"
-info_msg "${MSG_SAVE_URL}: http://${SERVER_IP} / http://${ACCESS_URL}"
-info_msg "${MSG_SAVE_LOG}: ${LOGPATH}"
-info_msg "--------------------------------------------------"
+info_msg "Installation completed successfully!"
