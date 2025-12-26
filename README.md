@@ -77,9 +77,7 @@ You can verify the installation with:
 ```bash
 adr -h
 ```
-
-
-
+<!-- spacer -->
 
 > [!TIP]
 > ADR roles are intended to be executed on a **fresh server install**.
