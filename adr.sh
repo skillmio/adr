@@ -4,7 +4,7 @@
 # ADR — Auto-Deploy Role
 # ==========================
 
-CURRENT_VERSION="0.1.9"
+CURRENT_VERSION="0.2.0"
 
 REPO_OWNER="skillmio"
 REPO_NAME="adr"
@@ -21,7 +21,7 @@ DEFAULT_LANG="en"
 LANG_CODE=""
 
 # ==========================
-# ENGLISH FAILSAFE (ALWAYS AVAILABLE)
+# ENGLISH FAILSAFE
 # ==========================
 msg() {
   case "$1" in
@@ -32,7 +32,7 @@ msg() {
     LIST) echo "  -l, --list            List available roles" ;;
     FIND) echo "  -f, --find <keyword>  Find a role (fuzzy search)" ;;
     LANG) echo "  --lang <code>         Set language permanently" ;;
-    DOCTOR) echo "  doctor                Run ADR diagnostics" ;;
+    DIAG) echo "  diag                  Run ADR diagnostics" ;;
     EXAMPLES) echo "Examples:" ;;
     EX1) echo "  adr wordpress" ;;
     EX2) echo "  adr --find stack" ;;
@@ -49,7 +49,6 @@ msg() {
     UPDATE_CHECK) echo "Checking for ADR updates..." ;;
     UPDATE_APPLY) echo "Updating ADR to version" ;;
     UNSUPPORTED_DISTRO) echo "Warning: unsupported distro." ;;
-    DETECTED) echo "Detected system:" ;;
     *) echo "$1" ;;
   esac
 }
@@ -68,7 +67,7 @@ ensure_locale() {
   local remote_file="$RAW_BASE_URL/locales/$lang/messages.sh"
 
   mkdir -p "$LOCALES_DIR/$lang"
-  [ -f "$local_file" ] || curl -fsSL "$remote_file" -o "$local_file" 2>/dev/null
+  [ -f "$local_file" ] || curl -fsSL "$remote_file" -o "$local_file"
 }
 
 load_messages() {
@@ -78,20 +77,18 @@ load_messages() {
 }
 
 save_lang() {
-  local lang="$1"
-
   mkdir -p "$CONFIG_DIR"
-  echo "ADR_LANG=$lang" > "$CONFIG_FILE"
+  echo "ADR_LANG=$1" > "$CONFIG_FILE"
 
-  LANG_CODE="$lang"
+  LANG_CODE="$1"
   load_messages
 
-  printf "$(msg LANG_SET)\n" "$lang"
+  printf "$(msg LANG_SET)\n" "$LANG_CODE"
   msg LANG_PERSIST
 }
 
 # ==========================
-# SELF UPDATE (AUTO)
+# SELF UPDATE
 # ==========================
 self_update() {
   msg UPDATE_CHECK
@@ -106,29 +103,21 @@ self_update() {
     chmod +x "$tmp"
     sudo mv "$tmp" /usr/local/bin/adr
     sudo chmod +x /usr/local/bin/adr
-    echo "Restarting ADR..."
     exec /usr/local/bin/adr "$@"
   fi
 }
 
 # ==========================
-# SYSTEM DETECTION
+# DISTRO DETECTION
 # ==========================
 DISTRO_SUFFIX=""
 
 detect_distro_suffix() {
   [ -f /etc/os-release ] || return
   . /etc/os-release
-
-  distro=$(echo "$ID" | tr '[:upper:]' '[:lower:]')
-  version=$(echo "$VERSION_ID" | cut -d '.' -f1)
-
-  case "$distro" in
-    almalinux|rhel|centos|centosstream|rocky|ol|oraclelinux|eurolinux|clearos)
-      DISTRO_SUFFIX="almalinux_${version}"
-      ;;
-    *)
-      msg UNSUPPORTED_DISTRO
+  case "$ID" in
+    almalinux|rhel|centos|rocky|ol|oraclelinux)
+      DISTRO_SUFFIX="almalinux_${VERSION_ID%%.*}"
       ;;
   esac
 }
@@ -137,9 +126,7 @@ detect_distro_suffix() {
 # FUZZY MATCH
 # ==========================
 fuzzy_match() {
-  local p=$(echo "$1" | tr '[:upper:]' '[:lower:]')
-  local s=$(echo "$2" | tr '[:upper:]' '[:lower:]')
-  local i=0 j=0
+  local p="${1,,}" s="${2,,}" i=0 j=0
   while [ $i -lt ${#p} ] && [ $j -lt ${#s} ]; do
     [ "${p:$i:1}" = "${s:$j:1}" ] && ((i++))
     ((j++))
@@ -152,9 +139,8 @@ fuzzy_match() {
 # ==========================
 list_roles() {
   msg FETCH_ROLES
-  roles=$(curl -fsSL "$ROLES_API_URL" | grep '"name":' | cut -d '"' -f4)
-  msg AVAILABLE_ROLES
-  for r in $roles; do
+  curl -fsSL "$ROLES_API_URL" | grep '"name":' | cut -d '"' -f4 |
+  while read -r r; do
     base="${r%.sh}"
     [[ "$base" == *_${DISTRO_SUFFIX} ]] && echo " - ${base%_${DISTRO_SUFFIX}}"
   done
@@ -163,8 +149,8 @@ list_roles() {
 find_role() {
   msg SEARCHING
   echo "  $1"
-  roles=$(curl -fsSL "$ROLES_API_URL" | grep '"name":' | cut -d '"' -f4)
-  for r in $roles; do
+  curl -fsSL "$ROLES_API_URL" | grep '"name":' | cut -d '"' -f4 |
+  while read -r r; do
     base="${r%.sh}"
     [[ "$base" == *_${DISTRO_SUFFIX} ]] || continue
     clean="${base%_${DISTRO_SUFFIX}}"
@@ -178,11 +164,7 @@ run_role() {
   tmp=$(mktemp "/tmp/$1.XXXX.sh")
 
   msg DOWNLOAD_ROLE
-  if ! curl -fsSL "$url" -o "$tmp"; then
-    msg ROLE_NOT_FOUND
-    exit 1
-  fi
-
+  curl -fsSL "$url" -o "$tmp" || { msg ROLE_NOT_FOUND; exit 1; }
   chmod +x "$tmp"
   msg EXEC_ROLE
   sudo bash "$tmp"
@@ -190,47 +172,36 @@ run_role() {
 }
 
 # ==========================
-# DOCTOR
+# DIAGNOSTICS
 # ==========================
-doctor() {
-  echo "ADR Doctor"
-  echo "=========="
-
-  echo "ADR version:        $CURRENT_VERSION"
-  echo "Binary path:        $(command -v adr)"
-  echo "Config dir:         $CONFIG_DIR"
-  echo "Config file:        $CONFIG_FILE"
-  echo "Language:           $LANG_CODE"
-  echo "Locales dir:        $LOCALES_DIR"
-
-  locale_file="$LOCALES_DIR/$LANG_CODE/messages.sh"
-  echo "Locale file:        $locale_file"
-  [ -f "$locale_file" ] && echo "Locale status:      OK" || echo "Locale status:      MISSING"
-
-  echo "Curl available:     $(command -v curl >/dev/null && echo yes || echo no)"
-  echo "Sudo available:     $(command -v sudo >/dev/null && echo yes || echo no)"
-  echo "GitHub reachable:   $(curl -fsSL https://github.com >/dev/null && echo yes || echo no)"
-  echo "Detected distro:    ${DISTRO_SUFFIX:-unknown}"
-
-  echo "Roles API reachable:"
-  curl -fsSL "$ROLES_API_URL" >/dev/null && echo "  yes" || echo "  no"
+diag() {
+  echo "ADR Diagnostics"
+  echo "==============="
+  echo "ADR version:      $CURRENT_VERSION"
+  echo "Binary path:      $(command -v adr)"
+  echo "Language:         $LANG_CODE"
+  echo "Locales dir:      $LOCALES_DIR"
+  echo "Locale file:      $LOCALES_DIR/$LANG_CODE/messages.sh"
+  echo "Curl available:   $(command -v curl >/dev/null && echo yes || echo no)"
+  echo "GitHub reachable: $(curl -fsSL https://github.com >/dev/null && echo yes || echo no)"
+  echo "Detected distro:  ${DISTRO_SUFFIX:-unknown}"
 }
 
-doctor_fix() {
-  echo "ADR Doctor — Fix mode"
-  echo "====================="
-  echo "This operation requires internet access."
+diag_fix() {
+  echo "ADR Diagnostics — Fix mode"
+  echo "=========================="
+  echo "Internet access is required."
   echo
 
-  echo "Re-downloading locale for language: $LANG_CODE"
-  rm -rf "$LOCALES_DIR/$LANG_CODE"
+  echo "Re-downloading ADR binary..."
+  curl -fsSL "$RAW_BASE_URL/adr.sh" -o /tmp/adr && chmod +x /tmp/adr &&
+    sudo mv /tmp/adr /usr/local/bin/adr
 
-  if ensure_locale "$LANG_CODE"; then
-    echo "Locale '$LANG_CODE' downloaded successfully."
-  else
-    echo "Failed to download locale '$LANG_CODE'. Falling back to English."
-    ensure_locale "$DEFAULT_LANG"
-  fi
+  echo "Re-downloading locale ($LANG_CODE)..."
+  rm -rf "$LOCALES_DIR/$LANG_CODE"
+  ensure_locale "$LANG_CODE" || ensure_locale "$DEFAULT_LANG"
+
+  echo "Fix completed."
 }
 
 # ==========================
@@ -248,7 +219,7 @@ show_help() {
   msg LIST
   msg FIND
   msg LANG
-  msg DOCTOR
+  msg DIAG
   echo
   msg EXAMPLES
   msg EX1
@@ -266,15 +237,15 @@ self_update "$@"
 detect_distro_suffix
 
 # ==========================
-# ARGUMENTS
+# ARGS
 # ==========================
 case "$1" in
   -h|--help) show_help ;;
   -l|--list) list_roles ;;
   -f|--find) find_role "$2" ;;
   --lang) save_lang "$2" ;;
-  doctor)
-    [ "$2" = "--fix" ] && doctor_fix || doctor
+  diag)
+    [ "$2" = "--fix" ] && diag_fix || diag
     ;;
   "") show_help ;;
   *) run_role "$1" ;;
