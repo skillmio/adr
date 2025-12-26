@@ -30,3 +30,36 @@ ROLE_NOT_FOUND() { echo "Error: role not found."; }
 LANG_SET() { echo "Language saved."; }
 DIAG_HEADER() { echo "ADR Diagnostics"; }
 REPAIR_START() { echo "Repairing ADR (internet required)..."; }
+
+#===BESZEL=====
+MSG_STEP_COLLECT="Collecting required configuration"
+MSG_STEP_VERSION="Detecting latest Beszel version"
+MSG_STEP_PACKAGES="Installing required system packages"
+MSG_STEP_USER="Ensuring beszel system user exists"
+MSG_STEP_ARCH="Detecting system architecture"
+MSG_STEP_DOWNLOAD="Downloading Beszel"
+MSG_STEP_INSTALL="Installing Beszel"
+MSG_STEP_SERVICES="Configuring services"
+MSG_STEP_FIREWALL="Configuring firewall"
+
+MSG_PROMPT_IP="Enter the IP to access Beszel"
+MSG_PROMPT_URL="Enter the URL/hostname to access Beszel"
+
+MSG_USING_IP="Using IP"
+MSG_USING_URL="Using URL"
+
+MSG_TAIL_HINT="You can follow installation progress with:"
+MSG_TAIL_CMD="tail -f"
+
+MSG_VERSION_DETECTED="Latest version detected"
+MSG_PROXY_FAIL="Proxy download failed, falling back to GitHub"
+MSG_ERR_VERSION="Failed to determine latest version"
+MSG_ERR_ARCH="Unsupported architecture"
+
+MSG_SAVE_HEADER="Save this information"
+MSG_SAVE_VERSION="Installed version"
+MSG_SAVE_PATH="Install directory"
+MSG_SAVE_SERVICE="Systemd service"
+MSG_SAVE_URL="Access URL"
+MSG_SAVE_LOG="Install log file"
+
