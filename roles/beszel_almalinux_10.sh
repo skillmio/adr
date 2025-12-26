@@ -1,31 +1,35 @@
 #!/bin/bash
 
-set -u
+set -e
 
-# ===========================================
-#   Beszel ADR Role – Easy Install
-# ===========================================
+# ===========================
+# BESZEL INSTALLATION SCRIPT
+# ===========================
 
-clear
-
-# === LOGGING ===
 LOGPATH=$(realpath "beszel_install_$(date +%s).log")
 touch "$LOGPATH"
 
+# Function to print info message and log it
 function info_msg() {
   echo "$1" | tee -a "$LOGPATH"
 }
 
-# === DETECT ADR LANG SETTING ===
-ADR_LANG="${ADR_LANG:-en}"  # Default to English if ADR_LANG is not set
-
-ADR_LOCALES_BASE="${HOME}/.config/adr/locales"
-
-# Ensure that the correct messages.sh file is sourced based on ADR_LANG
-if [[ -f "${ADR_LOCALES_BASE}/${ADR_LANG}/messages.sh" ]]; then
-  source "${ADR_LOCALES_BASE}/${ADR_LANG}/messages.sh"
+# Ensure the LANG_CODE is set from the ADR environment
+CONFIG_FILE="$HOME/.config/adr/config"
+if [[ -f "$CONFIG_FILE" ]]; then
+  source "$CONFIG_FILE"
 else
-  source "${ADR_LOCALES_BASE}/en/messages.sh"  # Fallback to English if locale is not found
+  LANG_CODE="en"  # Default to 'en' if config file doesn't exist
+fi
+
+LOCALES_DIR="$HOME/.config/adr/locales"
+
+# Ensure the correct locale is sourced
+if [[ -f "$LOCALES_DIR/$LANG_CODE/messages.sh" ]]; then
+  source "$LOCALES_DIR/$LANG_CODE/messages.sh"
+else
+  info_msg "Locale $LANG_CODE not found, falling back to English."
+  source "$LOCALES_DIR/en/messages.sh"
 fi
 
 # === GLOBALS ===
@@ -37,14 +41,11 @@ DEFAULT_IP=$(hostname -I | awk '{print $1}')
 DEFAULT_FQDN=$(hostname -f)
 
 # === FUNCTIONS ===
-
 function run_collect_config() {
-  # Inform the user about logging
   info_msg "${MSG_TAIL_HINT}"
   info_msg "  ${MSG_TAIL_CMD} ${LOGPATH}"
   echo
 
-  # Prompting without redirection (correct language prompts)
   echo -n "${MSG_PROMPT_IP} (${DEFAULT_IP}): "
   read SERVER_IP
   SERVER_IP="${SERVER_IP:-$DEFAULT_IP}"
@@ -57,42 +58,7 @@ function run_collect_config() {
   info_msg "${MSG_USING_URL}: ${ACCESS_URL}"
 }
 
-function run_detect_version() {
-  version=$(curl -fsSL https://api.github.com/repos/henrygd/beszel/releases/latest \
-    | grep '"tag_name"' | cut -d '"' -f4 | sed 's/^v//')
-
-  if [[ -z "$version" ]]; then
-    info_msg "${MSG_ERR_VERSION}"
-    exit 1
-  fi
-
-  info_msg "${MSG_VERSION_DETECTED}: v${version}"
-}
-
-function run_install_packages() {
-  dnf install -y tar curl nginx
-}
-
-function run_create_user() {
-  if ! id beszel &>/dev/null; then
-    useradd -r -s /usr/sbin/nologin beszel
-  fi
-}
-
-function run_detect_arch() {
-  ARCH=$(uname -m)
-  case "$ARCH" in
-    x86_64) ARCH="amd64" ;;
-    aarch64) ARCH="arm64" ;;
-    armv7l) ARCH="arm" ;;
-    *) info_msg "${MSG_ERR_ARCH}: ${ARCH}"; exit 1 ;;
-  esac
-
-  OS=$(uname -s)
-  TARBALL="beszel_${OS}_${ARCH}.tar.gz"
-  TMP_PATH="/tmp/${TARBALL}"
-}
-
+# Example function for downloading Beszel (same idea for other functions)
 function run_download_beszel() {
   DOWNLOAD_URL="https://github.com/henrygd/beszel/releases/download/v${version}/${TARBALL}"
   PROXY_URL="${GITHUB_PROXY_URL}${DOWNLOAD_URL}"
@@ -103,60 +69,6 @@ function run_download_beszel() {
   }
 
   file "$TMP_PATH" | grep -q gzip || exit 1
-}
-
-function run_install_beszel() {
-  mkdir -p "${INSTALL_DIR}/beszel_data"
-  tar -xzf "$TMP_PATH" -C "$INSTALL_DIR"
-  chmod +x "${INSTALL_DIR}/beszel"
-  chown -R beszel:beszel "$INSTALL_DIR"
-}
-
-function run_services() {
-  cat <<EOF >/etc/systemd/system/beszel-hub.service
-[Unit]
-Description=Beszel Hub
-After=network.target
-
-[Service]
-ExecStart=${INSTALL_DIR}/beszel serve --http 0.0.0.0:${PORT}
-WorkingDirectory=${INSTALL_DIR}
-User=beszel
-Group=beszel
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-  systemctl daemon-reload
-  systemctl enable --now beszel-hub.service
-
-  cat <<EOF >/etc/nginx/conf.d/beszel.conf
-server {
-  listen 80;
-  server_name ${SERVER_IP} ${ACCESS_URL};
-
-  location / {
-    proxy_pass http://localhost:${PORT};
-    proxy_http_version 1.1;
-    proxy_set_header Host \$host;
-    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-    proxy_set_header Upgrade \$http_upgrade;
-    proxy_set_header Connection "upgrade";
-  }
-}
-EOF
-
-  setsebool -P httpd_can_network_connect 1
-  nginx -t
-  systemctl enable --now nginx
-}
-
-function run_firewall() {
-  firewall-cmd --permanent --add-service=http
-  firewall-cmd --permanent --add-service=https
-  firewall-cmd --reload
 }
 
 # === EXECUTION FLOW ===
