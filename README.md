@@ -155,14 +155,8 @@ or
 ```bash
 adr --help
 ```
-
-### Notes
-
-* ADR is designed for **AlmaLinux and RHEL-compatible distributions**
-* Root privileges are required to install and configure services
-* Roles config are selected automatically based on your OS version
-* ADR is intended for a fresh server install
-
-
-
-
+>[!NOTE]
+>ADR is designed for **AlmaLinux and RHEL-compatible distributions**
+>Root privileges are required to install and configure services
+>Roles config are selected automatically based on your OS version
+>ADR is intended for a fresh server install
