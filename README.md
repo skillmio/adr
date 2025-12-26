@@ -19,7 +19,7 @@
   />
 
   <p>
-    Installation of WordPress with ADR
+    screenshot
   </p>
 </div>
 
