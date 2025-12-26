@@ -78,12 +78,11 @@ You can verify the installation with:
 adr -h
 ```
 
+> [!WARNING]
+> ADR roles are intended to be executed on a **fresh installation**.
+> Always take a system snapshot before deploying a role so you can roll back and retry without reinstalling the operating system from scratch.
 
 ## Usage
-
-> [!WARNING]
-> Always create a system snapshot before deploying a role.
-> If the deployment fails, you can easily roll back to a clean state and try again, instead of reinstalling the operating system from scratch.
 
 ADR allows you to deploy services using a single command.
 
