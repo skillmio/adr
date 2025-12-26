@@ -46,7 +46,7 @@ Whether you are managing servers, running a homelab, or automating deployments, 
   Get the same results every time, across different systems.
 
 * **Linux-focused**
-  Designed specifically for Linux servers and common deployment scenarios.
+  Designed specifically for almaLinux servers and common deployment scenarios.
 
 * **Automation-friendly**
   Easy to use interactively and easy to integrate into scripts or automation pipelines.
@@ -98,11 +98,12 @@ adr glpi
 adr bookstack
 ```
 
-Each role automatically handles:
+ADR automatically:
 
-* Package installation
-* Service configuration
-* Sensible defaults and basic security
+* Detects your OS and version
+* Downloads the correct role config
+* Installs and configures the service
+* Applies sensible defaults
 
 ---
 
@@ -117,6 +118,17 @@ or
 ```bash
 adr --list
 ```
+
+### Find a role (fuzzy search)
+
+ADR includes **fuzzy role search**, so you don’t need to know the exact role name.
+
+```bash
+adr --find word
+adr -f stack
+adr -f wp
+```
+Fuzzy search matches partial and abbreviated input, making role discovery faster and more user-friendly.
 
 
 ### Help
@@ -135,9 +147,19 @@ adr --help
 
 * ADR is designed for **AlmaLinux and RHEL-compatible distributions**
 * Root privileges are required to install and configure services
-* Roles are selected automatically based on your OS version
+* Roles config are selected automatically based on your OS version
 
 ---
 
+# Self-Updating
 
+ADR automatically checks for updates each time it runs.
+
+If a newer version is available, ADR will:
+
+* Download the latest script
+* Replace the local binary
+* Continue using the updated version automatically
+
+No manual update steps are required.
 
