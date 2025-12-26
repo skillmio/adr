@@ -1,0 +1,76 @@
+
+Here’s a **clean, reusable prompt** you can copy-paste whenever you want ChatGPT to refactor a script to **your installer template standard**.
+
+This is written to be **unambiguous and enforceable**.
+
+---
+
+## ✅ **Template Compliance Prompt**
+
+> Refactor the following Bash script to fully comply with my installer template standards.
+>
+> **Mandatory requirements:**
+>
+> 1. **Logging**
+>
+>    * Create a timestamped log file named using the script purpose
+>      (example: `LOGPATH=$(realpath "<name>_install_$(date +%s).log")`)
+>    * All command output must be redirected to this log.
+> 2. **info_msg helper**
+>
+>    * Implement an `info_msg()` function that prints messages to stdout **and** appends to the log using `tee -a "$LOGPATH"`.
+>    * All user-visible messages must go through `info_msg`.
+> 3. **Functions only**
+>
+>    * Every installation step must be implemented as its **own function**.
+>    * No direct execution of install logic outside functions.
+> 4. **Progress reporting**
+>
+>    * Each step must be announced using `info_msg` with numbered progress format:
+>      `[x/y] <description>`
+>    * The corresponding function must be executed with:
+>
+>      ```bash
+>      function_name >> "$LOGPATH" 2>&1
+>      ```
+> 5. **Save-this-info section**
+>
+>    * End the script with a clearly labeled summary section.
+>    * Must include:
+>
+>      * Installed version (if applicable)
+>      * Access URL(s)
+>      * Credentials (if generated)
+>      * Install paths
+>      * Systemd service names (if created)
+>      * Log file location
+>
+> **Additional constraints:**
+>
+> * Preserve existing functionality and behavior.
+> * Do not remove safety checks or prompts.
+> * Do not introduce external dependencies unless already used.
+> * Script must remain copy-paste runnable.
+>
+> Here is the script to refactor:
+>
+> ```bash
+> <PASTE SCRIPT HERE>
+> ```
+
+---
+
+## 🧠 Why this works
+
+* Forces **structure**, not “best effort”
+* Prevents partial compliance
+* Preserves behavior
+* Produces ADR-quality installers every time
+
+If you want, I can also give you:
+
+* a **short version**
+* a **strict CI-style version**
+* or a **role-author prompt** for contributors
+
+Just tell me.
