@@ -30,3 +30,36 @@ ROLE_NOT_FOUND() { echo "Erreur : rôle introuvable."; }
 LANG_SET() { echo "Langue enregistrée."; }
 DIAG_HEADER() { echo "Diagnostic ADR"; }
 REPAIR_START() { echo "Réparation d'ADR (internet requis)..."; }
+
+#===BESZEL=====
+MSG_STEP_COLLECT="Collecte de la configuration requise"
+MSG_STEP_VERSION="Détection de la dernière version de Beszel"
+MSG_STEP_PACKAGES="Installation des paquets requis"
+MSG_STEP_USER="Vérification de l'utilisateur beszel"
+MSG_STEP_ARCH="Détection de l’architecture du système"
+MSG_STEP_DOWNLOAD="Téléchargement de Beszel"
+MSG_STEP_INSTALL="Installation de Beszel"
+MSG_STEP_SERVICES="Configuration des services"
+MSG_STEP_FIREWALL="Configuration du pare-feu"
+
+MSG_PROMPT_IP="Entrez l’adresse IP pour accéder à Beszel"
+MSG_PROMPT_URL="Entrez l’URL ou le nom d’hôte de Beszel"
+
+MSG_USING_IP="IP utilisée"
+MSG_USING_URL="URL utilisée"
+
+MSG_TAIL_HINT="Vous pouvez suivre la progression avec :"
+MSG_TAIL_CMD="tail -f"
+
+MSG_VERSION_DETECTED="Dernière version détectée"
+MSG_PROXY_FAIL="Échec du proxy, utilisation de GitHub"
+MSG_ERR_VERSION="Impossible de déterminer la version"
+MSG_ERR_ARCH="Architecture non prise en charge"
+
+MSG_SAVE_HEADER="Conservez ces informations"
+MSG_SAVE_VERSION="Version installée"
+MSG_SAVE_PATH="Chemin d’installation"
+MSG_SAVE_SERVICE="Service systemd"
+MSG_SAVE_URL="URL d’accès"
+MSG_SAVE_LOG="Fichier de log"
+
