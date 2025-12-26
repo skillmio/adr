@@ -1,36 +1,32 @@
-HEADER() { echo "ADR — Auto-Deploy Role v$1"; }
-USAGE() { echo "Utilisation : adr <role>"; }
-OPTIONS() { echo "Options :" ; }
-
-OPT_HELP() { echo "  -h, --help          Afficher l'aide"; }
-OPT_LIST() { echo "  -l, --list          Lister les rôles disponibles"; }
-OPT_FIND() { echo "  -f, --find <nom>    Rechercher un rôle"; }
-OPT_LANG() { echo "  -lg, --lang <code>  Définir la langue (en, pt, fr)"; }
-OPT_DIAG() { echo "  -d, --diag          Diagnostic ADR"; }
-OPT_DIAG_FIX() { echo "  -df, --diag-fix     Réparer l'installation ADR"; }
-
-EXAMPLES() { echo "Exemples :" ; }
-EX1() { echo "  adr wordpress        Installer WordPress"; }
-EX2() { echo "  adr --find stack     Trouver les rôles contenant 'stack'"; }
-EX3() { echo "  adr --lang fr        Définir la langue en français"; }
-EX4() { echo "  adr -d               Lancer le diagnostic"; }
-EX5() { echo "  adr -df              Réparer l'installation ADR"; }
-
+VERSION_HEADER() { echo "ADR v$CURRENT_VERSION"; }
 UPDATE_CHECK() { echo "Vérification des mises à jour ADR..."; }
-UPDATE_APPLY() { echo "Mise à jour ADR vers la version $1"; }
+UPDATE_APPLY() { echo "Mise à jour de ADR..."; }
 
-LANG_SET() { echo "Langue définie sur $1"; }
-LANG_SAVED() { echo "Langue enregistrée pour les prochaines exécutions."; }
-LANG_MISSING() { echo "Erreur : code de langue manquant."; }
+USAGE() { echo "Utilisation: adr <role>"; }
 
-ROLES_AVAILABLE() { echo "Rôles disponibles :"; }
-FIND_MISSING() { echo "Erreur : terme de recherche manquant."; }
-FIND_SEARCH() { echo "Recherche des rôles pour : $1"; }
+OPTIONS() {
+  echo
+  echo "Options:"
+  echo "  -h, --help        Afficher l'aide"
+  echo "  -l, --list        Lister les rôles"
+  echo "  -f, --find        Rechercher un rôle"
+  echo "  -lg, --lang       Définir la langue"
+  echo "  -d, --diag        Diagnostic"
+  echo "  -r, --repair     Réparer ADR"
+}
 
-ROLE_DOWNLOAD() { echo "Téléchargement du rôle : $1"; }
+EXAMPLES() {
+  echo
+  echo "Exemples:"
+  echo "  adr wordpress     Installer WordPress"
+  echo "  adr -f stack      Rechercher un rôle"
+  echo "  adr -lg fr        Définir la langue"
+  echo "  adr -d            Diagnostic"
+  echo "  adr -r            Réparer ADR"
+}
+
+ROLE_DOWNLOAD() { echo "Téléchargement du rôle..."; }
 ROLE_NOT_FOUND() { echo "Erreur : rôle introuvable."; }
-
+LANG_SET() { echo "Langue enregistrée."; }
 DIAG_HEADER() { echo "Diagnostic ADR"; }
-DIAG_FIX_INFO() { echo "Réparation de l'installation ADR (connexion internet requise)..."; }
-
-MSG_MISSING() { echo "Message manquant : $1"; }
+REPAIR_START() { echo "Réparation d'ADR (internet requis)..."; }
