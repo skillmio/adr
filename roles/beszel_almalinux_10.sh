@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -u
 
 # ===========================================
@@ -16,7 +17,7 @@ function info_msg() {
 }
 
 # === LOAD ADR LOCALES ===
-ADR_LANG="${ADR_LANG:-en}"
+ADR_LANG="${ADR_LANG:-pt}"
 ADR_LOCALES_BASE="${HOME}/.config/adr/locales"
 
 if [[ -f "${ADR_LOCALES_BASE}/${ADR_LANG}/messages.sh" ]]; then
@@ -40,6 +41,7 @@ function run_collect_config() {
   info_msg "  ${MSG_TAIL_CMD} ${LOGPATH}"
   echo
 
+  # Prompting without redirection
   read -p "${MSG_PROMPT_IP} (${DEFAULT_IP}): " SERVER_IP
   SERVER_IP="${SERVER_IP:-$DEFAULT_IP}"
 
