@@ -13,6 +13,20 @@ function info_msg() {
   echo "$1" | tee -a "$LOGPATH"
 }
 
+# === ADR LOCALE LOADING ===
+ADR_CONFIG="$HOME/.config/adr/config"
+ADR_LOCALES="$HOME/.config/adr/locales"
+DEFAULT_LANG="en"
+
+[ -f "$ADR_CONFIG" ] && source "$ADR_CONFIG"
+LANG="${LANG:-$DEFAULT_LANG}"
+
+if [ -f "$ADR_LOCALES/$LANG/messages.sh" ]; then
+  source "$ADR_LOCALES/$LANG/messages.sh"
+else
+  source "$ADR_LOCALES/$DEFAULT_LANG/messages.sh"
+fi
+
 # === GLOBAL VARIABLES ===
 PORT=8090
 INSTALL_DIR="/opt/beszel"
@@ -22,14 +36,14 @@ TMP_DIR="/tmp"
 # === FUNCTIONS ===
 
 function prompt_user_inputs() {
-  read -p "Enter the IP to access Beszel (leave blank for $(hostname -I | awk '{print $1}')): " SERVER_IP
+  read -p "${MSG_PROMPT_IP} ($(hostname -I | awk '{print $1}')): " SERVER_IP
   [ -z "$SERVER_IP" ] && SERVER_IP=$(hostname -I | awk '{print $1}')
 
-  read -p "Enter the URL/hostname to access Beszel (leave blank for $(hostname -f)): " ACCESS_URL
+  read -p "${MSG_PROMPT_URL} ($(hostname -f)): " ACCESS_URL
   [ -z "$ACCESS_URL" ] && ACCESS_URL=$(hostname -f)
 
-  info_msg "User access IP set to: ${SERVER_IP}"
-  info_msg "User access URL set to: ${ACCESS_URL}"
+  info_msg "${MSG_USING_IP}: ${SERVER_IP}"
+  info_msg "${MSG_USING_URL}: ${ACCESS_URL}"
 }
 
 function get_latest_version() {
@@ -38,12 +52,9 @@ function get_latest_version() {
     | cut -d '"' -f4 \
     | sed 's/^v//')
 
-  if [ -z "$version" ]; then
-    info_msg "ERROR: Failed to detect latest Beszel version"
-    exit 1
-  fi
+  [ -z "$version" ] && { info_msg "${MSG_ERR_VERSION}"; exit 1; }
 
-  info_msg "Latest Beszel version detected: v${version}"
+  info_msg "${MSG_VERSION_DETECTED}: v${version}"
 }
 
 function install_required_packages() {
@@ -60,7 +71,7 @@ function detect_architecture() {
     x86_64) ARCH="amd64" ;;
     aarch64) ARCH="arm64" ;;
     armv7l) ARCH="arm" ;;
-    *) info_msg "Unsupported architecture: $ARCH"; exit 1 ;;
+    *) info_msg "${MSG_ERR_ARCH}: $ARCH"; exit 1 ;;
   esac
 
   OS=$(uname -s)
@@ -75,7 +86,7 @@ function download_beszel() {
   curl -L --fail -o "$TMP_PATH" "$PROXY_URL" || true
 
   if ! file "$TMP_PATH" | grep -q 'gzip compressed data'; then
-    info_msg "Proxy failed, downloading directly from GitHub..."
+    info_msg "${MSG_PROXY_FAIL}"
     curl -L --fail -o "$TMP_PATH" "$DOWNLOAD_URL"
   fi
 }
@@ -99,7 +110,6 @@ WorkingDirectory=${INSTALL_DIR}
 User=beszel
 Group=beszel
 Restart=always
-RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
@@ -112,20 +122,14 @@ EOF
 function configure_nginx() {
   tee /etc/nginx/conf.d/beszel.conf > /dev/null <<EOF
 server {
-    listen 80;
-    server_name ${SERVER_IP} ${ACCESS_URL};
+  listen 80;
+  server_name ${SERVER_IP} ${ACCESS_URL};
 
-    access_log /var/log/nginx/beszel_access.log;
-    error_log /var/log/nginx/beszel_error.log;
-
-    location / {
-        proxy_pass http://localhost:${PORT};
-        proxy_http_version 1.1;
-        proxy_set_header Host \$host;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection "upgrade";
-    }
+  location / {
+    proxy_pass http://localhost:${PORT};
+    proxy_set_header Host \$host;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+  }
 }
 EOF
 
@@ -142,44 +146,42 @@ function configure_firewall() {
 
 # === EXECUTION FLOW ===
 
-info_msg "[1/9] Collecting required configuration"
-info_msg "You can follow installation progress with:"
-info_msg "  tail -f ${LOGPATH}"
+info_msg "[1/9] ${MSG_STEP_COLLECT}"
+info_msg "${MSG_TAIL_HINT}"
+info_msg "  ${MSG_TAIL_CMD} ${LOGPATH}"
 prompt_user_inputs
 
-info_msg "[2/9] Detecting latest Beszel version..."
+info_msg "[2/9] ${MSG_STEP_VERSION}"
 get_latest_version >> "$LOGPATH" 2>&1
 
-info_msg "[3/9] Installing required system packages..."
+info_msg "[3/9] ${MSG_STEP_PACKAGES}"
 install_required_packages >> "$LOGPATH" 2>&1
 
-info_msg "[4/9] Ensuring system user 'beszel' exists..."
+info_msg "[4/9] ${MSG_STEP_USER}"
 ensure_beszel_user >> "$LOGPATH" 2>&1
 
-info_msg "[5/9] Detecting system architecture..."
+info_msg "[5/9] ${MSG_STEP_ARCH}"
 detect_architecture >> "$LOGPATH" 2>&1
 
-info_msg "[6/9] Downloading Beszel..."
+info_msg "[6/9] ${MSG_STEP_DOWNLOAD}"
 download_beszel >> "$LOGPATH" 2>&1
 
-info_msg "[7/9] Installing Beszel..."
+info_msg "[7/9] ${MSG_STEP_INSTALL}"
 install_beszel >> "$LOGPATH" 2>&1
 
-info_msg "[8/9] Configuring system services..."
+info_msg "[8/9] ${MSG_STEP_SERVICES}"
 configure_systemd >> "$LOGPATH" 2>&1
 configure_nginx >> "$LOGPATH" 2>&1
 
-info_msg "[9/9] Configuring firewall..."
+info_msg "[9/9] ${MSG_STEP_FIREWALL}"
 configure_firewall >> "$LOGPATH" 2>&1
 
 # === SAVE THIS INFORMATION ===
-info_msg "------------------------------------------------------------"
-info_msg "Beszel installation completed successfully"
-info_msg "- Installed version:        v${version}"
-info_msg "- Install directory:        ${INSTALL_DIR}"
-info_msg "- Systemd service:          beszel-hub.service"
-info_msg "- Runs as user:             beszel"
-info_msg "- Web UI access:            http://${SERVER_IP} or http://${ACCESS_URL}"
-info_msg "- Listening port:           ${PORT}"
-info_msg "- Install log file:         ${LOGPATH}"
-info_msg "------------------------------------------------------------"
+info_msg "------------------------------------------------"
+info_msg "${MSG_SAVE_HEADER}"
+info_msg "- ${MSG_SAVE_VERSION}: v${version}"
+info_msg "- ${MSG_SAVE_PATH}: ${INSTALL_DIR}"
+info_msg "- ${MSG_SAVE_SERVICE}: beszel-hub.service"
+info_msg "- ${MSG_SAVE_URL}: http://${SERVER_IP} | http://${ACCESS_URL}"
+info_msg "- ${MSG_SAVE_LOG}: ${LOGPATH}"
+info_msg "------------------------------------------------"
