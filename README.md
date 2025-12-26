@@ -144,6 +144,47 @@ If a newer version is available, ADR will:
 
 No manual update steps are required.
 
+### Diagnostics
+
+ADR includes built-in diagnostics to help troubleshoot issues.
+
+```bash
+adr -d
+```
+
+This command checks:
+
+* ADR installation
+* Configuration files
+* Language files
+* Network connectivity
+* Role API availability
+
+To automatically fix detected issues:
+
+```bash
+adr -df
+```
+
+This will re-download ADR and language files (internet access required).
+
+### Language support
+
+ADR supports multiple languages and remembers your preference.
+
+Set the language permanently:
+
+```bash
+adr -lg pt
+```
+
+Available languages include:
+
+* `en` — English
+* `pt` — Portuguese
+* `fr` — French
+
+
 ### Help
 
 To display usage information:
