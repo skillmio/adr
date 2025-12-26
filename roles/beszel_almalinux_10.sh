@@ -8,7 +8,20 @@
 clear
 
 # === INPUT VARIABLES ===
-version=0.17.0
+echo "Fetching latest Beszel version from GitHub..."
+
+version=$(curl -fsSL https://api.github.com/repos/henrygd/beszel/releases/latest \
+  | grep '"tag_name"' \
+  | cut -d '"' -f4 \
+  | sed 's/^v//')
+
+if [ -z "$version" ]; then
+  echo "Failed to determine latest Beszel version"
+  exit 1
+fi
+
+echo "Latest version detected: v${version}"
+
 PORT=8090
 GITHUB_PROXY_URL="https://ghfast.top/"    # Optional proxy to speed up GitHub downloads
 
