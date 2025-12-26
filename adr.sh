@@ -4,7 +4,7 @@
 # ADR — Auto-Deploy Role
 # ==========================
 
-CURRENT_VERSION="0.1.3"
+CURRENT_VERSION="0.1.4"
 
 REPO_OWNER="skillmio"
 REPO_NAME="adr"
@@ -19,20 +19,61 @@ API_URL="https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents/roles"
 
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/adr"
 CONFIG_FILE="$CONFIG_DIR/config"
+LOCALES_DIR="$CONFIG_DIR/locales"
+
 DEFAULT_LANG="en"
 LANG_CODE="$DEFAULT_LANG"
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LOCALES_DIR="$SCRIPT_DIR/locales"
 
 # --------------------------
 # Load config
 # --------------------------
 load_config() {
-  if [ -f "$CONFIG_FILE" ]; then
-    # shellcheck source=/dev/null
-    source "$CONFIG_FILE"
+  [ -f "$CONFIG_FILE" ] && source "$CONFIG_FILE"
+}
+
+# --------------------------
+# Ensure locale exists (download if missing)
+# --------------------------
+ensure_locale() {
+  local lang="$1"
+  local local_file="$LOCALES_DIR/$lang/messages.sh"
+  local remote_file="$RAW_BASE_URL/locales/$lang/messages.sh"
+
+  mkdir -p "$LOCALES_DIR/$lang"
+
+  if [ ! -f "$local_file" ]; then
+    curl -fsSL "$remote_file" -o "$local_file" 2>/dev/null || return 1
   fi
+}
+
+# --------------------------
+# Load messages
+# --------------------------
+load_messages() {
+  local lang="$1"
+
+  ensure_locale "$lang" || ensure_locale "$DEFAULT_LANG"
+
+  local file="$LOCALES_DIR/$lang/messages.sh"
+  [ ! -f "$file" ] && file="$LOCALES_DIR/$DEFAULT_LANG/messages.sh"
+
+  if [ ! -f "$file" ]; then
+    echo "Fatal: Unable to load language files."
+    exit 1
+  fi
+
+  source "$file"
+}
+
+# --------------------------
+# Message helpers
+# --------------------------
+msg() {
+  echo "${MESSAGES[$1]}"
+}
+
+msgf() {
+  printf "${MESSAGES[$1]}\n" "$2"
 }
 
 # --------------------------
@@ -49,7 +90,7 @@ save_lang() {
 
   load_messages "$lang"
 
-  printf "$(msg LANG_SET)\n" "$lang"
+  msgf LANG_SET "$lang"
   msg LANG_PERSIST
 }
 
@@ -58,40 +99,8 @@ save_lang() {
 # --------------------------
 resolve_lang() {
   load_config
-
-  if [ -n "$ADR_LANG" ]; then
-    LANG_CODE="$ADR_LANG"
-  else
-    LANG_CODE="${LANG%%_*}"
-  fi
-
+  LANG_CODE="${ADR_LANG:-${LANG%%_*}}"
   LANG_CODE="${LANG_CODE:-$DEFAULT_LANG}"
-}
-
-# --------------------------
-# Load messages
-# --------------------------
-load_messages() {
-  local lang="$1"
-  local file="$LOCALES_DIR/$lang/messages.sh"
-
-  if [ ! -f "$file" ]; then
-    file="$LOCALES_DIR/$DEFAULT_LANG/messages.sh"
-  fi
-
-  # shellcheck source=/dev/null
-  source "$file"
-}
-
-# --------------------------
-# Message helpers
-# --------------------------
-msg() {
-  echo "${MESSAGES[$1]}"
-}
-
-msgf() {
-  printf "${MESSAGES[$1]}\n" "$2"
 }
 
 # --------------------------
@@ -100,26 +109,26 @@ msgf() {
 DISTRO_SUFFIX=""
 
 detect_distro_suffix() {
-  if [ -f /etc/os-release ]; then
-    . /etc/os-release
+  [ -f /etc/os-release ] || return
 
-    distro_id=$(echo "$ID" | tr '[:upper:]' '[:lower:]')
-    version_major=$(echo "$VERSION_ID" | cut -d '.' -f1)
+  . /etc/os-release
 
-    case "$distro_id" in
-      almalinux|rhel|centos|centosstream|rocky|ol|oraclelinux|eurolinux|clearos)
-        DISTRO_SUFFIX="almalinux_${version_major}"
-        ;;
-      *)
-        printf "$(msg UNSUPPORTED_DISTRO)\n" "$distro_id"
-        msg SUPPORTED_DISTRO_HINT
-        DISTRO_SUFFIX=""
-        ;;
-    esac
+  distro_id=$(echo "$ID" | tr '[:upper:]' '[:lower:]')
+  version_major=$(echo "$VERSION_ID" | cut -d '.' -f1)
 
-    [ -n "$DISTRO_SUFFIX" ] && \
-      printf "$(msg DETECTED_SYSTEM)\n" "$distro_id" "$VERSION_ID" "$DISTRO_SUFFIX"
-  fi
+  case "$distro_id" in
+    almalinux|rhel|centos|centosstream|rocky|ol|oraclelinux|eurolinux|clearos)
+      DISTRO_SUFFIX="almalinux_${version_major}"
+      ;;
+    *)
+      msgf UNSUPPORTED_DISTRO "$distro_id"
+      msg SUPPORTED_DISTRO_HINT
+      DISTRO_SUFFIX=""
+      ;;
+  esac
+
+  [ -n "$DISTRO_SUFFIX" ] && \
+    printf "$(msg DETECTED_SYSTEM)\n" "$distro_id" "$VERSION_ID" "$DISTRO_SUFFIX"
 }
 
 # --------------------------
@@ -149,39 +158,35 @@ self_update() {
   REMOTE_SCRIPT=$(curl -fsSL "$RAW_BASE_URL/adr.sh")
   REMOTE_VERSION=$(echo "$REMOTE_SCRIPT" | grep '^CURRENT_VERSION=' | cut -d '"' -f2)
 
-  if [ "$REMOTE_VERSION" != "$CURRENT_VERSION" ]; then
-    printf "$(msg UPDATING)\n" "$REMOTE_VERSION"
+  [ "$REMOTE_VERSION" = "$CURRENT_VERSION" ] && return
 
-    TMP_FILE=$(mktemp /tmp/adr.XXXXXX)
-    curl -fsSL "$RAW_BASE_URL/adr.sh" -o "$TMP_FILE" || exit 1
-    chmod +x "$TMP_FILE"
+  printf "$(msg UPDATING)\n" "$REMOTE_VERSION"
 
-    sudo mv "$TMP_FILE" /usr/local/bin/adr
-    sudo chmod +x /usr/local/bin/adr
+  TMP_FILE=$(mktemp /tmp/adr.XXXXXX)
+  curl -fsSL "$RAW_BASE_URL/adr.sh" -o "$TMP_FILE" || exit 1
+  chmod +x "$TMP_FILE"
 
-    msg UPDATED_SUCCESS
-    exit 0
-  fi
+  sudo mv "$TMP_FILE" /usr/local/bin/adr
+  sudo chmod +x /usr/local/bin/adr
+
+  msg UPDATED_SUCCESS
+  exit 0
 }
 
 # --------------------------
-# Fuzzy match (subsequence)
+# Fuzzy match
 # --------------------------
 fuzzy_match() {
-  local pattern="$1"
-  local string="$2"
-
-  pattern=$(echo "$pattern" | tr '[:upper:]' '[:lower:]')
-  string=$(echo "$string" | tr '[:upper:]' '[:lower:]')
+  local p="$1" s="$2"
+  p=$(echo "$p" | tr '[:upper:]' '[:lower:]')
+  s=$(echo "$s" | tr '[:upper:]' '[:lower:]')
 
   local i=0 j=0
-
-  while [ $i -lt ${#pattern} ] && [ $j -lt ${#string} ]; do
-    [ "${pattern:$i:1}" = "${string:$j:1}" ] && ((i++))
+  while [ $i -lt ${#p} ] && [ $j -lt ${#s} ]; do
+    [ "${p:$i:1}" = "${s:$j:1}" ] && ((i++))
     ((j++))
   done
-
-  [ $i -eq ${#pattern} ]
+  [ $i -eq ${#p} ]
 }
 
 # --------------------------
@@ -194,8 +199,7 @@ list_roles() {
   roles=$(curl -fsSL "$API_URL" | grep '"name":' | cut -d '"' -f4)
 
   for role in $roles; do
-    scripts=$(curl -fsSL "$API_URL/$role" | grep "$DISTRO_SUFFIX.sh" || true)
-    [ -n "$scripts" ] && echo " - $role"
+    curl -fsSL "$API_URL/$role" | grep -q "$DISTRO_SUFFIX.sh" && echo " - $role"
   done
 }
 
@@ -204,15 +208,14 @@ list_roles() {
 # --------------------------
 find_role() {
   local query="$1"
-
   [ -z "$query" ] && { msg NO_SEARCH_TERM; exit 1; }
 
   msg MATCHING_ROLES
   echo
 
   roles=$(curl -fsSL "$API_URL" | grep '"name":' | cut -d '"' -f4)
-
   found=false
+
   for role in $roles; do
     if fuzzy_match "$query" "$role"; then
       echo " - $role"
@@ -230,14 +233,13 @@ run_role() {
   local role="$1"
   local script="${role}_${DISTRO_SUFFIX}.sh"
   local url="$RAW_BASE_URL/roles/$role/$script"
-  local tmp
 
-  printf "$(msg DEPLOYING_ROLE)\n" "$role"
+  msgf DEPLOYING_ROLE "$role"
 
   tmp=$(mktemp "/tmp/${role}.XXXXXX.sh")
 
   if ! curl -fsSL "$url" -o "$tmp"; then
-    printf "$(msg ROLE_NOT_FOUND)\n" "$role"
+    msgf ROLE_NOT_FOUND "$role"
     exit 1
   fi
 
@@ -247,7 +249,7 @@ run_role() {
 }
 
 # --------------------------
-# Argument parsing
+# Parse arguments
 # --------------------------
 POSITIONAL=()
 ACTION=""
