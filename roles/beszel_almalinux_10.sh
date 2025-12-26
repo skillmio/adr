@@ -17,12 +17,12 @@ function info_msg() {
 
 # === LOAD ADR LOCALES ===
 ADR_LANG="${ADR_LANG:-en}"
-ADR_LOCALE_DIR="${ADR_LOCALE_DIR:-$HOME/.config/adr/locales/$ADR_LANG}"
+ADR_LOCALES_BASE="${HOME}/.config/adr/locales"
 
-if [[ -f "$ADR_LOCALE_DIR/messages.sh" ]]; then
-  source "$ADR_LOCALE_DIR/messages.sh"
+if [[ -f "${ADR_LOCALES_BASE}/${ADR_LANG}/messages.sh" ]]; then
+  source "${ADR_LOCALES_BASE}/${ADR_LANG}/messages.sh"
 else
-  source "$HOME/.config/adr/locales/en/messages.sh"
+  source "${ADR_LOCALES_BASE}/en/messages.sh"
 fi
 
 # === GLOBALS ===
@@ -36,15 +36,18 @@ DEFAULT_FQDN=$(hostname -f)
 # === FUNCTIONS ===
 
 function run_collect_config() {
-  info_msg "${MSG_FOLLOW_PROGRESS}"
-  info_msg "  tail -f $LOGPATH"
+  info_msg "${MSG_TAIL_HINT}"
+  info_msg "  ${MSG_TAIL_CMD} ${LOGPATH}"
   echo
 
-  read -p "${MSG_ENTER_IP} (${DEFAULT_IP}): " SERVER_IP
+  read -p "${MSG_PROMPT_IP} (${DEFAULT_IP}): " SERVER_IP
   SERVER_IP="${SERVER_IP:-$DEFAULT_IP}"
 
-  read -p "${MSG_ENTER_URL} (${DEFAULT_FQDN}): " ACCESS_URL
+  read -p "${MSG_PROMPT_URL} (${DEFAULT_FQDN}): " ACCESS_URL
   ACCESS_URL="${ACCESS_URL:-$DEFAULT_FQDN}"
+
+  info_msg "${MSG_USING_IP}: ${SERVER_IP}"
+  info_msg "${MSG_USING_URL}: ${ACCESS_URL}"
 }
 
 function run_detect_version() {
@@ -52,14 +55,14 @@ function run_detect_version() {
     | grep '"tag_name"' | cut -d '"' -f4 | sed 's/^v//')
 
   if [[ -z "$version" ]]; then
-    info_msg "${MSG_VERSION_FAIL}"
+    info_msg "${MSG_ERR_VERSION}"
     exit 1
   fi
 
-  info_msg "$(printf "$MSG_VERSION_OK" "$version")"
+  info_msg "${MSG_VERSION_DETECTED}: v${version}"
 }
 
-function run_install_deps() {
+function run_install_packages() {
   dnf install -y tar curl nginx
 }
 
@@ -75,7 +78,7 @@ function run_detect_arch() {
     x86_64) ARCH="amd64" ;;
     aarch64) ARCH="arm64" ;;
     armv7l) ARCH="arm" ;;
-    *) info_msg "$(printf "$MSG_UNSUPPORTED_ARCH" "$ARCH")"; exit 1 ;;
+    *) info_msg "${MSG_ERR_ARCH}: ${ARCH}"; exit 1 ;;
   esac
 
   OS=$(uname -s)
@@ -87,13 +90,12 @@ function run_download_beszel() {
   DOWNLOAD_URL="https://github.com/henrygd/beszel/releases/download/v${version}/${TARBALL}"
   PROXY_URL="${GITHUB_PROXY_URL}${DOWNLOAD_URL}"
 
-  curl -L --fail -o "$TMP_PATH" "$PROXY_URL" || \
-  curl -L --fail -o "$TMP_PATH" "$DOWNLOAD_URL"
-
-  file "$TMP_PATH" | grep -q gzip || {
-    info_msg "$MSG_DOWNLOAD_FAIL"
-    exit 1
+  curl -L --fail -o "$TMP_PATH" "$PROXY_URL" || {
+    info_msg "${MSG_PROXY_FAIL}"
+    curl -L --fail -o "$TMP_PATH" "$DOWNLOAD_URL"
   }
+
+  file "$TMP_PATH" | grep -q gzip || exit 1
 }
 
 function run_install_beszel() {
@@ -103,8 +105,8 @@ function run_install_beszel() {
   chown -R beszel:beszel "$INSTALL_DIR"
 }
 
-function run_systemd_setup() {
-  cat <<EOF > /etc/systemd/system/beszel-hub.service
+function run_services() {
+  cat <<EOF >/etc/systemd/system/beszel-hub.service
 [Unit]
 Description=Beszel Hub
 After=network.target
@@ -122,10 +124,8 @@ EOF
 
   systemctl daemon-reload
   systemctl enable --now beszel-hub.service
-}
 
-function run_nginx_setup() {
-  cat <<EOF > /etc/nginx/conf.d/beszel.conf
+  cat <<EOF >/etc/nginx/conf.d/beszel.conf
 server {
   listen 80;
   server_name ${SERVER_IP} ${ACCESS_URL};
@@ -154,19 +154,19 @@ function run_firewall() {
 
 # === EXECUTION FLOW ===
 
-info_msg "[1/9] ${MSG_STEP_COLLECT_CONFIG}"
+info_msg "[1/9] ${MSG_STEP_COLLECT}"
 run_collect_config >>"$LOGPATH" 2>&1
 
-info_msg "[2/9] ${MSG_STEP_DETECT_VERSION}"
+info_msg "[2/9] ${MSG_STEP_VERSION}"
 run_detect_version >>"$LOGPATH" 2>&1
 
-info_msg "[3/9] ${MSG_STEP_INSTALL_DEPS}"
-run_install_deps >>"$LOGPATH" 2>&1
+info_msg "[3/9] ${MSG_STEP_PACKAGES}"
+run_install_packages >>"$LOGPATH" 2>&1
 
-info_msg "[4/9] ${MSG_STEP_CREATE_USER}"
+info_msg "[4/9] ${MSG_STEP_USER}"
 run_create_user >>"$LOGPATH" 2>&1
 
-info_msg "[5/9] ${MSG_STEP_DETECT_ARCH}"
+info_msg "[5/9] ${MSG_STEP_ARCH}"
 run_detect_arch >>"$LOGPATH" 2>&1
 
 info_msg "[6/9] ${MSG_STEP_DOWNLOAD}"
@@ -175,17 +175,18 @@ run_download_beszel >>"$LOGPATH" 2>&1
 info_msg "[7/9] ${MSG_STEP_INSTALL}"
 run_install_beszel >>"$LOGPATH" 2>&1
 
-info_msg "[8/9] ${MSG_STEP_SYSTEMD}"
-run_systemd_setup >>"$LOGPATH" 2>&1
+info_msg "[8/9] ${MSG_STEP_SERVICES}"
+run_services >>"$LOGPATH" 2>&1
 
-info_msg "[9/9] ${MSG_STEP_NGINX}"
-run_nginx_setup >>"$LOGPATH" 2>&1
+info_msg "[9/9] ${MSG_STEP_FIREWALL}"
 run_firewall >>"$LOGPATH" 2>&1
 
-# === SAVE THIS INFO ===
+# === SAVE THIS INFORMATION ===
 info_msg "--------------------------------------------------"
-info_msg "$MSG_INSTALL_DONE"
-info_msg "$(printf "$MSG_ACCESS_URL" "$SERVER_IP" "$ACCESS_URL")"
-info_msg "$(printf "$MSG_INSTALL_PATH" "$INSTALL_DIR")"
-info_msg "$(printf "$MSG_LOG_PATH" "$LOGPATH")"
+info_msg "${MSG_SAVE_HEADER}"
+info_msg "${MSG_SAVE_VERSION}: v${version}"
+info_msg "${MSG_SAVE_PATH}: ${INSTALL_DIR}"
+info_msg "${MSG_SAVE_SERVICE}: beszel-hub.service"
+info_msg "${MSG_SAVE_URL}: http://${SERVER_IP} / http://${ACCESS_URL}"
+info_msg "${MSG_SAVE_LOG}: ${LOGPATH}"
 info_msg "--------------------------------------------------"
