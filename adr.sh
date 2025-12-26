@@ -136,16 +136,27 @@ find_role() {
 
 run_role() {
   role="$1"
+
+  # Always refresh locale before role execution
+  rm -rf "$LOCALES_DIR/$LANG_CODE"
+  ensure_locale "$LANG_CODE" || ensure_locale "$DEFAULT_LANG"
+  source "$LOCALES_DIR/$LANG_CODE/messages.sh"
+
   script="${role}_${DISTRO_SUFFIX}.sh"
   url="$RAW_BASE_URL/roles/$script"
   tmp=$(mktemp /tmp/adr-role.XXXXXX.sh)
 
   msg ROLE_DOWNLOAD
-  curl -fsSL "$url" -o "$tmp" || { msg ROLE_NOT_FOUND; exit 1; }
+  if ! curl -fsSL "$url" -o "$tmp"; then
+    msg ROLE_NOT_FOUND
+    exit 1
+  fi
+
   chmod +x "$tmp"
   sudo bash "$tmp"
   rm -f "$tmp"
 }
+
 
 set_lang() {
   LANG_CODE="$1"
