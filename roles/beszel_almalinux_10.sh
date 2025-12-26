@@ -8,7 +8,7 @@
 clear
 
 # === INPUT VARIABLES ===
-version=0.12.1
+version=0.17.0
 PORT=8090
 GITHUB_PROXY_URL="https://ghfast.top/"    # Optional proxy to speed up GitHub downloads
 
