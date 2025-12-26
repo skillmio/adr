@@ -4,7 +4,7 @@
 # ADR — Auto-Deploy Role
 # ==========================
 
-CURRENT_VERSION="0.1.0"
+CURRENT_VERSION="0.1.1"
 
 REPO_OWNER="skillmio"
 REPO_NAME="adr"
@@ -28,7 +28,7 @@ detect_distro_suffix() {
         ;;
       *)
         echo "Warning: Unsupported distro '$distro_id'."
-        echo "ADR is designed for AlmaLinux and RHEL-compatible systems."
+        echo "ADR targets AlmaLinux and RHEL-compatible systems."
         DISTRO_SUFFIX=""
         ;;
     esac
@@ -46,11 +46,12 @@ show_help() {
   echo "Options:"
   echo "  -h, --help       Show this help message"
   echo "  -l, --list       List available roles"
+  echo "  -f, --find       Find a role by name (fuzzy search)"
   echo
   echo "Examples:"
   echo "  adr wordpress"
-  echo "  adr glpi"
-  echo "  adr bookstack"
+  echo "  adr --find stack"
+  echo "  adr -f wp"
   echo
 }
 
@@ -79,6 +80,27 @@ self_update() {
   fi
 }
 
+# === FUZZY MATCH (subsequence) ===
+fuzzy_match() {
+  local pattern="$1"
+  local string="$2"
+
+  pattern=$(echo "$pattern" | tr '[:upper:]' '[:lower:]')
+  string=$(echo "$string" | tr '[:upper:]' '[:lower:]')
+
+  local i=0
+  local j=0
+
+  while [ $i -lt ${#pattern} ] && [ $j -lt ${#string} ]; do
+    if [ "${pattern:$i:1}" = "${string:$j:1}" ]; then
+      ((i++))
+    fi
+    ((j++))
+  done
+
+  [ $i -eq ${#pattern} ]
+}
+
 # === LIST AVAILABLE ROLES ===
 list_available_roles() {
   echo "Fetching available ADR roles..."
@@ -100,6 +122,47 @@ list_available_roles() {
 
   for r in "${filtered[@]}"; do
     printf " - %s\n" "$r"
+  done
+
+  echo
+}
+
+# === FIND ROLE (FUZZY) ===
+find_role() {
+  query="$1"
+
+  if [ -z "$query" ]; then
+    echo "Error: No search term provided."
+    echo "Usage: adr --find <keyword>"
+    exit 1
+  fi
+
+  echo "Searching ADR roles for: '$query'"
+
+  roles=$(curl -fsSL "$API_URL" | grep '"name":' | grep '.sh' | cut -d '"' -f 4 | grep -v '^adr.sh$')
+
+  matches=()
+  for role in $roles; do
+    base=$(basename "$role" .sh)
+
+    if [[ "$base" == *_${DISTRO_SUFFIX} ]]; then
+      clean="${base%_${DISTRO_SUFFIX}}"
+
+      if fuzzy_match "$query" "$clean"; then
+        matches+=("$clean")
+      fi
+    fi
+  done
+
+  if [ ${#matches[@]} -eq 0 ]; then
+    echo "No matching roles found."
+    exit 0
+  fi
+
+  echo
+  echo "Matching roles:"
+  for m in "${matches[@]}"; do
+    printf " - %s\n" "$m"
   done
 
   echo
@@ -140,6 +203,9 @@ case "$1" in
     ;;
   -l|--list)
     list_available_roles
+    ;;
+  -f|--find)
+    find_role "$2"
     ;;
   "")
     echo "Error: No role specified."
