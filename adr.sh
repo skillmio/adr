@@ -4,7 +4,7 @@
 # ADR — Auto-Deploy Role
 # ==========================
 
-CURRENT_VERSION="0.2.2"
+CURRENT_VERSION="0.2.3"
 
 REPO_OWNER="skillmio"
 REPO_NAME="adr"
