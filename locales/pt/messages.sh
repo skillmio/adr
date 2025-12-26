@@ -1,36 +1,32 @@
-case "$1" in VERSION) echo "Versão:" ;; LANG_SET) echo "Idioma definido para %s" ;; FETCH_ROLES) echo "A obter roles disponíveis do ADR..." ;;
-USAGE() { echo "Uso: adr <role>"; }
-OPTIONS() { echo "Opções:"; }
-
-OPT_HELP() { echo "  -h, --help          Mostrar ajuda"; }
-OPT_LIST() { echo "  -l, --list          Listar roles disponíveis"; }
-OPT_FIND() { echo "  -f, --find <nome>   Procurar um role"; }
-OPT_LANG() { echo "  -lg, --lang <código> Definir idioma (en, pt, fr)"; }
-OPT_DIAG() { echo "  -d, --diag          Diagnóstico do ADR"; }
-OPT_DIAG_FIX() { echo "  -df, --diag-fix     Reparar instalação do ADR"; }
-
-EXAMPLES() { echo "Exemplos:"; }
-EX1() { echo "  adr wordpress        Instalar WordPress"; }
-EX2() { echo "  adr --find stack     Procurar roles com 'stack'"; }
-EX3() { echo "  adr --lang pt        Definir idioma para Português"; }
-EX4() { echo "  adr -d               Executar diagnóstico"; }
-EX5() { echo "  adr -df              Reparar instalação do ADR"; }
-
+VERSION_HEADER() { echo "ADR v$CURRENT_VERSION"; }
 UPDATE_CHECK() { echo "A verificar atualizações do ADR..."; }
-UPDATE_APPLY() { echo "A atualizar ADR para a versão $1"; }
+UPDATE_APPLY() { echo "A atualizar o ADR..."; }
 
-LANG_SET() { echo "Idioma definido para $1"; }
-LANG_SAVED() { echo "Idioma guardado para futuras execuções."; }
-LANG_MISSING() { echo "Erro: código de idioma em falta."; }
+USAGE() { echo "Uso: adr <role>"; }
 
-ROLES_AVAILABLE() { echo "Roles disponíveis:"; }
-FIND_MISSING() { echo "Erro: termo de pesquisa em falta."; }
-FIND_SEARCH() { echo "A procurar roles por: $1"; }
+OPTIONS() {
+  echo
+  echo "Opções:"
+  echo "  -h, --help        Mostrar ajuda"
+  echo "  -l, --list        Listar roles"
+  echo "  -f, --find        Procurar role"
+  echo "  -lg, --lang       Definir idioma"
+  echo "  -d, --diag        Diagnóstico"
+  echo "  -r, --repair     Reparar ADR"
+}
 
-ROLE_DOWNLOAD() { echo "A transferir role: $1"; }
+EXAMPLES() {
+  echo
+  echo "Exemplos:"
+  echo "  adr wordpress     Instalar WordPress"
+  echo "  adr -f stack      Procurar role"
+  echo "  adr -lg pt        Definir idioma"
+  echo "  adr -d            Diagnóstico"
+  echo "  adr -r            Reparar ADR"
+}
+
+ROLE_DOWNLOAD() { echo "A transferir role..."; }
 ROLE_NOT_FOUND() { echo "Erro: role não encontrado."; }
-
-DIAG_HEADER() { echo "Diagnóstico do ADR"; }
-DIAG_FIX_INFO() { echo "A reparar a instalação do ADR (necessita internet)..."; }
-
-MSG_MISSING() { echo "Mensagem em falta: $1"; }
+LANG_SET() { echo "Idioma guardado."; }
+DIAG_HEADER() { echo "Diagnóstico ADR"; }
+REPAIR_START() { echo "A reparar o ADR (internet necessário)..."; }
