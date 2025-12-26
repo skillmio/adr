@@ -7,7 +7,7 @@ msg() {
     LIST) echo "  -l, --list            List available roles" ;;
     FIND) echo "  -f, --find <keyword>  Find a role (fuzzy search)" ;;
     LANG) echo "  --lang <code>         Set language permanently" ;;
-    DOCTOR) echo "  doctor                Run ADR diagnostics" ;;
+    DIAG) echo "  diag                  Run ADR diagnostics" ;;
     EXAMPLES) echo "Examples:" ;;
     EX1) echo "  adr wordpress" ;;
     EX2) echo "  adr --find stack" ;;
@@ -24,7 +24,10 @@ msg() {
     UPDATE_CHECK) echo "Checking for ADR updates..." ;;
     UPDATE_APPLY) echo "Updating ADR to version" ;;
     UNSUPPORTED_DISTRO) echo "Warning: unsupported distro." ;;
-    DETECTED) echo "Detected system:" ;;
+    DIAG_TITLE) echo "ADR Diagnostics" ;;
+    DIAG_FIX_TITLE) echo "ADR Diagnostics — Fix mode" ;;
+    DIAG_INTERNET) echo "Internet access is required." ;;
+    DIAG_DONE) echo "Fix completed." ;;
     *) echo "$1" ;;
   esac
 }
