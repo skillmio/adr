@@ -68,7 +68,6 @@ ensure_locale() {
   local remote_file="$RAW_BASE_URL/locales/$lang/messages.sh"
 
   mkdir -p "$LOCALES_DIR/$lang"
-
   [ -f "$local_file" ] || curl -fsSL "$remote_file" -o "$local_file" 2>/dev/null
 }
 
@@ -79,11 +78,15 @@ load_messages() {
 }
 
 save_lang() {
+  local lang="$1"
+
   mkdir -p "$CONFIG_DIR"
-  echo "ADR_LANG=$1" > "$CONFIG_FILE"
-  LANG_CODE="$1"
+  echo "ADR_LANG=$lang" > "$CONFIG_FILE"
+
+  LANG_CODE="$lang"
   load_messages
-  printf "$(msg LANG_SET)\n" "$1"
+
+  printf "$(msg LANG_SET)\n" "$lang"
   msg LANG_PERSIST
 }
 
@@ -202,23 +205,33 @@ doctor() {
 
   locale_file="$LOCALES_DIR/$LANG_CODE/messages.sh"
   echo "Locale file:        $locale_file"
-
-  if [ -f "$locale_file" ]; then
-    echo "Locale status:      OK"
-  else
-    echo "Locale status:      MISSING (will be downloaded on next run)"
-  fi
+  [ -f "$locale_file" ] && echo "Locale status:      OK" || echo "Locale status:      MISSING"
 
   echo "Curl available:     $(command -v curl >/dev/null && echo yes || echo no)"
   echo "Sudo available:     $(command -v sudo >/dev/null && echo yes || echo no)"
   echo "GitHub reachable:   $(curl -fsSL https://github.com >/dev/null && echo yes || echo no)"
-
   echo "Detected distro:    ${DISTRO_SUFFIX:-unknown}"
 
   echo "Roles API reachable:"
   curl -fsSL "$ROLES_API_URL" >/dev/null && echo "  yes" || echo "  no"
 }
 
+doctor_fix() {
+  echo "ADR Doctor — Fix mode"
+  echo "====================="
+  echo "This operation requires internet access."
+  echo
+
+  echo "Re-downloading locale for language: $LANG_CODE"
+  rm -rf "$LOCALES_DIR/$LANG_CODE"
+
+  if ensure_locale "$LANG_CODE"; then
+    echo "Locale '$LANG_CODE' downloaded successfully."
+  else
+    echo "Failed to download locale '$LANG_CODE'. Falling back to English."
+    ensure_locale "$DEFAULT_LANG"
+  fi
+}
 
 # ==========================
 # HELP
@@ -260,7 +273,9 @@ case "$1" in
   -l|--list) list_roles ;;
   -f|--find) find_role "$2" ;;
   --lang) save_lang "$2" ;;
-  doctor) doctor ;;
+  doctor)
+    [ "$2" = "--fix" ] && doctor_fix || doctor
+    ;;
   "") show_help ;;
   *) run_role "$1" ;;
 esac
