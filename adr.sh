@@ -4,7 +4,7 @@
 # ADR — Auto-Deploy Role
 # ==========================
 
-CURRENT_VERSION="0.1.7"
+CURRENT_VERSION="0.1.8"
 
 REPO_OWNER="skillmio"
 REPO_NAME="adr"
@@ -192,19 +192,33 @@ run_role() {
 doctor() {
   echo "ADR Doctor"
   echo "=========="
+
   echo "ADR version:        $CURRENT_VERSION"
   echo "Binary path:        $(command -v adr)"
   echo "Config dir:         $CONFIG_DIR"
   echo "Config file:        $CONFIG_FILE"
   echo "Language:           $LANG_CODE"
   echo "Locales dir:        $LOCALES_DIR"
+
+  locale_file="$LOCALES_DIR/$LANG_CODE/messages.sh"
+  echo "Locale file:        $locale_file"
+
+  if [ -f "$locale_file" ]; then
+    echo "Locale status:      OK"
+  else
+    echo "Locale status:      MISSING (will be downloaded on next run)"
+  fi
+
   echo "Curl available:     $(command -v curl >/dev/null && echo yes || echo no)"
   echo "Sudo available:     $(command -v sudo >/dev/null && echo yes || echo no)"
   echo "GitHub reachable:   $(curl -fsSL https://github.com >/dev/null && echo yes || echo no)"
-  echo "Detected distro:    $DISTRO_SUFFIX"
+
+  echo "Detected distro:    ${DISTRO_SUFFIX:-unknown}"
+
   echo "Roles API reachable:"
   curl -fsSL "$ROLES_API_URL" >/dev/null && echo "  yes" || echo "  no"
 }
+
 
 # ==========================
 # HELP
