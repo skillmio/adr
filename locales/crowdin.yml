@@ -1,1 +1,4 @@
+files:
+  - source: locales/en/*.sh
+    translation: /locales/%two_letters_code%/%original_file_name%
 
