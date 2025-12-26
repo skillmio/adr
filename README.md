@@ -59,7 +59,6 @@ Whether you are managing servers, running a homelab, or automating deployments, 
 * **Faster service delivery** from fresh system to running service
 * **Safer defaults** with built-in configuration and best practices
 
----
 
 ## Installation
 
@@ -79,7 +78,6 @@ You can verify the installation with:
 adr -h
 ```
 
----
 
 ## Usage
 
@@ -130,6 +128,17 @@ adr -f wp
 ```
 Fuzzy search matches partial and abbreviated input, making role discovery faster and more user-friendly.
 
+### Self-Updating
+
+ADR automatically checks for updates each time it runs.
+
+If a newer version is available, ADR will:
+
+* Download the latest script
+* Replace the local binary
+* Continue using the updated version automatically
+
+No manual update steps are required.
 
 ### Help
 
@@ -149,17 +158,6 @@ adr --help
 * Root privileges are required to install and configure services
 * Roles config are selected automatically based on your OS version
 
----
 
-# Self-Updating
 
-ADR automatically checks for updates each time it runs.
-
-If a newer version is available, ADR will:
-
-* Download the latest script
-* Replace the local binary
-* Continue using the updated version automatically
-
-No manual update steps are required.
 
