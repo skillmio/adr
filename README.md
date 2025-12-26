@@ -79,7 +79,7 @@ adr -h
 ```
 >
 >
-> [!TIP]
+> [!NOTE]
 > ADR roles are intended to be executed on a **fresh server install**.
 > Always take a system snapshot before deploying a role so you can roll back and retry without reinstalling the operating system from scratch.
 
@@ -157,6 +157,9 @@ adr --help
 ```
 >[!NOTE]
 >ADR is designed for **AlmaLinux and RHEL-compatible distributions**
+>
 >Root privileges are required to install and configure services
+>
 >Roles config are selected automatically based on your OS version
+>
 >ADR is intended for a fresh server install
