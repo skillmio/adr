@@ -163,9 +163,12 @@ This command checks:
 To automatically fix detected issues:
 
 ```bash
-adr -df
+adr -r
 ```
-
+or 
+```bash
+adr --repair
+```
 This will re-download ADR and language files (internet access required).
 
 ### Language support
