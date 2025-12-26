@@ -95,6 +95,9 @@ Other examples:
 adr glpi
 adr bookstack
 ```
+> [!WARNING]
+> Always create a system snapshot before deploying a role.
+> If the deployment fails, you can easily roll back to a clean state and try again, instead of reinstalling the operating system from scratch.
 
 ADR automatically:
 
@@ -103,7 +106,6 @@ ADR automatically:
 * Installs and configures the service
 * Applies sensible defaults
 
----
 
 ### List available roles
 
