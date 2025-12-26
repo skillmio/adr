@@ -79,7 +79,7 @@ adr -h
 ```
 
 > [!WARNING]
-> ADR roles are intended to be executed on a **fresh installation**.
+> ADR roles are intended to be executed on a **fresh server install**.
 > Always take a system snapshot before deploying a role so you can roll back and retry without reinstalling the operating system from scratch.
 
 ## Usage
