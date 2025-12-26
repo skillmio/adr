@@ -9,7 +9,7 @@
   </a>
 
   <p>
-    <code>adr beszel</code> · <code>adr wordpress</code> · <code>adr glpi</code> · <code>adr bookstack</code>
+    <code>adr --help</code> · <code>adr --list</code> · <code>adr --find</code> · <code>adr --diag</code>
   </p>
 
   <img
