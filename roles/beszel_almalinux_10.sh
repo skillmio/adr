@@ -17,13 +17,14 @@ function info_msg() {
 }
 
 # === LOAD ADR LOCALES ===
-ADR_LANG="${ADR_LANG:-pt}"
+ADR_LANG="${ADR_LANG:-pt}"  # Default to pt if not set
 ADR_LOCALES_BASE="${HOME}/.config/adr/locales"
 
+# Check if the selected language file exists
 if [[ -f "${ADR_LOCALES_BASE}/${ADR_LANG}/messages.sh" ]]; then
   source "${ADR_LOCALES_BASE}/${ADR_LANG}/messages.sh"
 else
-  source "${ADR_LOCALES_BASE}/en/messages.sh"
+  source "${ADR_LOCALES_BASE}/en/messages.sh"  # Fallback to English if locale is not found
 fi
 
 # === GLOBALS ===
@@ -37,11 +38,12 @@ DEFAULT_FQDN=$(hostname -f)
 # === FUNCTIONS ===
 
 function run_collect_config() {
+  # Inform the user about logging
   info_msg "${MSG_TAIL_HINT}"
   info_msg "  ${MSG_TAIL_CMD} ${LOGPATH}"
   echo
 
-  # Prompting without redirection
+  # Prompting without redirection (correct language prompts)
   read -p "${MSG_PROMPT_IP} (${DEFAULT_IP}): " SERVER_IP
   SERVER_IP="${SERVER_IP:-$DEFAULT_IP}"
 
