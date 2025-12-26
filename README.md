@@ -76,7 +76,7 @@ Once installed, the `adr` command will be available system-wide.
 You can verify the installation with:
 
 ```bash
-adr --help
+adr -h
 ```
 
 ---
@@ -111,6 +111,10 @@ Each role automatically handles:
 To see all available roles for your system:
 
 ```bash
+adr -l
+```
+or
+```bash
 adr --list
 ```
 
@@ -119,6 +123,10 @@ adr --list
 
 To display usage information:
 
+```bash
+adr -h
+```
+or
 ```bash
 adr --help
 ```
