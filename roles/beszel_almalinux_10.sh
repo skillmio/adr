@@ -39,6 +39,7 @@ fi
 # === FUNCTIONS ===
 
 function prompt_user_inputs() {
+  # Here we keep the prompts intact as requested
   read -p "${MSG_PROMPT_IP} ($(hostname -I | awk '{print $1}')): " SERVER_IP
   [ -z "$SERVER_IP" ] && SERVER_IP=$(hostname -I | awk '{print $1}')
 
