@@ -9,7 +9,7 @@
   </a>
 
   <p>
-    <code>adr --help</code> · <code>adr --list</code> · <code>adr --find</code> · <code>adr --diag</code>
+    <code>adr --help</code> · <code>adr --list</code> · <code>adr --find</code> · <code>adr --diag</code> · <code>adr --repair</code>
   </p>
 
   <img
