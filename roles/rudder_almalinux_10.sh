@@ -6,6 +6,8 @@
 
 clear
 
+SOLUTION="Rudder"
+
 # === LOGGING ===
 LOGPATH=$(realpath "rudder_install_$(date +%s).log")
 
