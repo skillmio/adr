@@ -6,6 +6,8 @@
 
 clear
 
+SOLUTION="beszel"
+
 # === LOGGING ===
 LOGPATH=$(realpath "beszel_install_$(date +%s).log")
 
