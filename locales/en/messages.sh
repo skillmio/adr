@@ -42,8 +42,8 @@ MSG_STEP_INSTALL="Installing $SOLUTION"
 MSG_STEP_SERVICES="Configuring services"
 MSG_STEP_FIREWALL="Configuring firewall"
 
-MSG_PROMPT_IP="Enter the IP to access Beszel"
-MSG_PROMPT_URL="Enter the URL/hostname to access Beszel"
+MSG_PROMPT_IP="Enter the IP to access $SOLUTION"
+MSG_PROMPT_URL="Enter the URL/hostname to access $SOLUTION"
 
 MSG_USING_IP="Using IP"
 MSG_USING_URL="Using URL"
