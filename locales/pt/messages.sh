@@ -33,17 +33,17 @@ REPAIR_START() { echo "A reparar o ADR (internet necessário)..."; }
 
 #===BESZEL=====
 MSG_STEP_COLLECT="A recolher configuração necessária"
-MSG_STEP_VERSION="A detetar a versão mais recente do Beszel"
+MSG_STEP_VERSION="A detetar a versão mais recente do $SOLUTION"
 MSG_STEP_PACKAGES="A instalar pacotes necessários"
-MSG_STEP_USER="A garantir que o utilizador beszel existe"
+MSG_STEP_USER="A garantir que o utilizador $SOLUTION existe"
 MSG_STEP_ARCH="A detetar a arquitetura do sistema"
-MSG_STEP_DOWNLOAD="A descarregar o Beszel"
-MSG_STEP_INSTALL="A instalar o Beszel"
+MSG_STEP_DOWNLOAD="A descarregar o $SOLUTION"
+MSG_STEP_INSTALL="A instalar o $SOLUTION"
 MSG_STEP_SERVICES="A configurar serviços"
 MSG_STEP_FIREWALL="A configurar firewall"
 
-MSG_PROMPT_IP="Introduza o IP para aceder ao Beszel"
-MSG_PROMPT_URL="Introduza o URL/nome do host do Beszel"
+MSG_PROMPT_IP="Introduza o IP para aceder ao $SOLUTION"
+MSG_PROMPT_URL="Introduza o URL/nome do host do $SOLUTION"
 
 MSG_USING_IP="IP utilizado"
 MSG_USING_URL="URL utilizado"
