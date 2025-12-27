@@ -31,7 +31,7 @@ LANG_SET() { echo "Language saved."; }
 DIAG_HEADER() { echo "ADR Diagnostics"; }
 REPAIR_START() { echo "Repairing ADR (internet required)..."; }
 
-#===BESZEL=====
+#===ROLES=====
 MSG_STEP_COLLECT="Collecting required configuration"
 MSG_STEP_VERSION="Detecting latest $SOLUTION version"
 MSG_STEP_PACKAGES="Installing required system packages"
