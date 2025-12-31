@@ -1,3 +1,4 @@
+# === ADR MSGs === 
 VERSION_HEADER() { echo "ADR v$CURRENT_VERSION"; }
 UPDATE_CHECK() { echo "A verificar atualizações do ADR..."; }
 UPDATE_APPLY() { echo "A atualizar o ADR..."; }
@@ -31,35 +32,14 @@ LANG_SET() { echo "Idioma guardado."; }
 DIAG_HEADER() { echo "Diagnóstico ADR"; }
 REPAIR_START() { echo "A reparar o ADR (internet necessário)..."; }
 
-#===ROLES=====
-MSG_STEP_COLLECT="A recolher configuração necessária"
-MSG_STEP_VERSION="A detetar a versão mais recente do $SOLUTION"
-MSG_STEP_PACKAGES="A instalar pacotes necessários"
-MSG_STEP_USER="A garantir que o utilizador $SOLUTION existe"
-MSG_STEP_ARCH="A detetar a arquitetura do sistema"
-MSG_STEP_DOWNLOAD="A descarregar o $SOLUTION"
-MSG_STEP_INSTALL="A instalar o $SOLUTION"
-MSG_STEP_SERVICES="A configurar serviços"
-MSG_STEP_FIREWALL="A configurar firewall"
 
-MSG_PROMPT_IP="Introduza o IP para aceder ao $SOLUTION"
-MSG_PROMPT_URL="Introduza o URL/nome do host do $SOLUTION"
 
-MSG_USING_IP="IP utilizado"
-MSG_USING_URL="URL utilizado"
-
-MSG_TAIL_HINT="Pode acompanhar o progresso da instalação com:"
-MSG_TAIL_CMD="tail -f"
-
-MSG_VERSION_DETECTED="Versão mais recente detetada"
-MSG_PROXY_FAIL="Falha no proxy, a usar GitHub"
-MSG_ERR_VERSION="Não foi possível determinar a versão"
-MSG_ERR_ARCH="Arquitetura não suportada"
-
-MSG_SAVE_HEADER="Guarde esta informação"
-MSG_SAVE_VERSION="Versão instalada"
-MSG_SAVE_PATH="Diretório de instalação"
-MSG_SAVE_SERVICE="Serviço systemd"
-MSG_SAVE_URL="URL de acesso"
-MSG_SAVE_LOG="Ficheiro de log"
-
+# === ROLE MSGs === 
+MSG_PROMPT_IP="Enter the IP address to use for accessing $SOLUTION"
+MSG_PROMPT_URL="Enter the URL or hostname to use for accessing $SOLUTION"
+MSG_USING_IP="IP has been set to"
+MSG_USING_URL="URL has been set to"
+MSG_INSTALL_MARIADB="Installing and Configure MariaDB"
+MSG_INSTALL_APACHE="Installing and Configure Apache"
+MSG_INSTALL_PHP="Installing and Configure PHP"
+MSG_INSTALL_SOLUTION="Installing and Configure "
