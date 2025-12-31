@@ -19,8 +19,7 @@ function info_msg() {
   echo "$1" | tee -a "$LOGPATH"
 }
 
-info_msg "=== Starting $SOLUTION installation ==="
-info_msg "Log file: $LOGPATH"
+
 
 # --- LANGUAGE ---
 CONFIG_FILE="$HOME/.config/adr/config"
@@ -47,6 +46,10 @@ DB_USER="wpuser"
 DB_PASS="$(tr -dc A-Za-z0-9 </dev/urandom | head -c 13)"
 MYSQL_ROOT_PASS="$(tr -dc A-Za-z0-9 </dev/urandom | head -c 13)"
 
+# --- Hello Msg ---
+info_msg "${MSG_START}"
+info_msg "${MSG_LOGPATH}"
+
 # --- USER PROMPTS ---
 read -p "${MSG_PROMPT_IP} ($(hostname -I | awk '{print $1}')): " SERVER_IP
 SERVER_IP=${SERVER_IP:-$(hostname -I | awk '{print $1}')}
@@ -58,6 +61,7 @@ info_msg "${MSG_USING_IP}: $SERVER_IP"
 info_msg "${MSG_USING_URL}: $ACCESS_URL"
 
 # === INSTALLATION STEPS ===
+
 # --- [1/5] INSTALLING PREREQUISITES ---
 info_msg "[1/5] ${MSG_INSTALL_PREREQUISITES}"
 {
