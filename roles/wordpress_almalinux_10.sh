@@ -102,7 +102,7 @@ info_msg "[4/5] ${MSG_INSTALL_PHP}"
 } >>"$LOGPATH" 2>&1
 
 # --- [5/5] INSTALLING WORDPRESS ---
-info_msg "[5/5] ${MSG_INSTALL_SOLUTION} $SOLUTION"
+info_msg "[5/5] ${MSG_INSTALL_SOLUTION}"
 {
   cd /tmp
   curl -O https://wordpress.org/latest.tar.gz
