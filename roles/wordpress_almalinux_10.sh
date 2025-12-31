@@ -58,9 +58,15 @@ info_msg "${MSG_USING_IP}: $SERVER_IP"
 info_msg "${MSG_USING_URL}: $ACCESS_URL"
 
 # === INSTALLATION STEPS ===
+# --- [1/5] INSTALLING PREREQUISITES ---
+info_msg "[1/5] ${MSG_INSTALL_PREREQUISITES}"
+{
+sudo dnf install -y epel-release
+sudo dnf install -y wget tar 
+} >>"$LOGPATH" 2>&1
 
-# --- [1/4] INSTALLING MARIADB ---
-info_msg "[1/4] ${MSG_INSTALL_MARIADB}"
+# --- [2/5] INSTALLING MARIADB ---
+info_msg "[2/5] ${MSG_INSTALL_MARIADB}"
 {
   sudo dnf install -y mariadb-server
   sudo systemctl enable --now mariadb
@@ -75,15 +81,15 @@ info_msg "[1/4] ${MSG_INSTALL_MARIADB}"
   sudo mysql -uroot -p"${MYSQL_ROOT_PASS}" -e "FLUSH PRIVILEGES;"
 } >>"$LOGPATH" 2>&1
 
-# --- [2/4] INSTALLING APACHE ---
-info_msg "[2/4] ${MSG_INSTALL_APACHE}"
+# --- [3/5] INSTALLING APACHE ---
+info_msg "[3/5] ${MSG_INSTALL_APACHE}"
 {
   sudo dnf install -y httpd
   sudo systemctl enable --now httpd
 } >>"$LOGPATH" 2>&1
 
-# --- [3/4] INSTALLING PHP ---
-info_msg "[3/4] ${MSG_INSTALL_PHP}"
+# --- [4/5] INSTALLING PHP ---
+info_msg "[4/5] ${MSG_INSTALL_PHP}"
 {
   sudo dnf install -y php php-mysqlnd php-gd php-xml php-mbstring \
                      php-json php-curl php-zip php-intl
@@ -91,8 +97,8 @@ info_msg "[3/4] ${MSG_INSTALL_PHP}"
   php -v
 } >>"$LOGPATH" 2>&1
 
-# --- [4/4] INSTALLING WORDPRESS ---
-info_msg "[4/4] ${MSG_INSTALL_SOLUTION} $SOLUTION"
+# --- [5/5] INSTALLING WORDPRESS ---
+info_msg "[5/5] ${MSG_INSTALL_SOLUTION} $SOLUTION"
 {
   cd /tmp
   curl -O https://wordpress.org/latest.tar.gz
