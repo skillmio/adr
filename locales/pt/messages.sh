@@ -3,16 +3,16 @@ VERSION_HEADER() { echo "ADR v$CURRENT_VERSION"; }
 UPDATE_CHECK() { echo "A verificar atualizações do ADR..."; }
 UPDATE_APPLY() { echo "A atualizar o ADR..."; }
 
-USAGE() { echo "Uso: adr <role>"; }
+USAGE() { echo "Utilização: adr <função>"; }
 
 OPTIONS() {
   echo
   echo "Opções:"
   echo "  -h, --help        Mostrar ajuda"
-  echo "  -l, --list        Listar roles"
-  echo "  -f, --find        Procurar role"
+  echo "  -l, --list        Listar funções"
+  echo "  -f, --find        Procurar função"
   echo "  -lg, --lang       Definir idioma"
-  echo "  -d, --diag        Diagnóstico"
+  echo "  -d, --diag        Diagnósticos"
   echo "  -r, --repair     Reparar ADR"
 }
 
@@ -20,42 +20,42 @@ EXAMPLES() {
   echo
   echo "Exemplos:"
   echo "  adr wordpress     Instalar WordPress"
-  echo "  adr -f stack      Procurar role"
+  echo "  adr -f stack      Procurar uma função"
   echo "  adr -lg pt        Definir idioma"
-  echo "  adr -d            Diagnóstico"
+  echo "  adr -d            Diagnósticos"
   echo "  adr -r            Reparar ADR"
 }
 
-ROLE_DOWNLOAD() { echo "A transferir role..."; }
-ROLE_NOT_FOUND() { echo "Erro: role não encontrado."; }
+ROLE_DOWNLOAD() { echo "A transferir função..."; }
+ROLE_NOT_FOUND() { echo "Erro: função não encontrada."; }
 LANG_SET() { echo "Idioma guardado."; }
-DIAG_HEADER() { echo "Diagnóstico ADR"; }
-REPAIR_START() { echo "A reparar o ADR (internet necessário)..."; }
+DIAG_HEADER() { echo "Diagnósticos ADR"; }
+REPAIR_START() { echo "A reparar o ADR (ligação à internet necessária)..."; }
 
 
 
 # === ROLE MSGs === 
-MSG_START="=== Starting $SOLUTION installation ==="
-MSG_LOGPATH=" Log file: $LOGPATH"
-MSG_PROMPT_IP="Enter the IP address that will be used to access $SOLUTION"
-MSG_PROMPT_URL="Enter the URL or Hostname that will be used to access $SOLUTION"
-MSG_USING_IP="IP has been set to"
-MSG_USING_URL="URL has been set to"
-MSG_INSTALL_PREREQUISITES="Installing Required Packages"
-MSG_INSTALL_MARIADB="Installing and Configuring MariaDB"
-MSG_INSTALL_POSTGSQL="Installing and Configuring PostgreSQL"
-MSG_INSTALL_APACHE="Installing and Configuring Apache"
-MSG_INSTALL_NGINX="Installing and Configuring Nginx"
-MSG_INSTALL_PHP="Installing and Configuring PHP"
-MSG_INSTALL_PHPMYADMIN="Installing and Configuring phpMyAdmin"
-MSG_INSTALL_SOLUTION="Installing and Configuring $SOLUTION"
-MSG_FIREWALL="Creating allow rules on the firewall"
-MSG_INSTALL_COMPLETE="$SOLUTION installation completed (SAVE THIS INFO)"
+MSG_START="=== A iniciar a instalação de $SOLUTION ==="
+MSG_LOGPATH=" Ficheiro de log: $LOGPATH"
+MSG_PROMPT_IP="Introduza o endereço IP que será utilizado para aceder a $SOLUTION"
+MSG_PROMPT_URL="Introduza o URL ou nome de host que será utilizado para aceder a $SOLUTION"
+MSG_USING_IP="O IP foi definido como"
+MSG_USING_URL="O URL foi definido como"
+MSG_INSTALL_PREREQUISITES="A instalar pacotes necessários"
+MSG_INSTALL_MARIADB="A instalar e configurar o MariaDB"
+MSG_INSTALL_POSTGSQL="A instalar e configurar o PostgreSQL"
+MSG_INSTALL_APACHE="A instalar e configurar o Apache"
+MSG_INSTALL_NGINX="A instalar e configurar o Nginx"
+MSG_INSTALL_PHP="A instalar e configurar o PHP"
+MSG_INSTALL_PHPMYADMIN="A instalar e configurar o phpMyAdmin"
+MSG_INSTALL_SOLUTION="A instalar e configurar $SOLUTION"
+MSG_FIREWALL="A criar regras de permissão na firewall"
+MSG_INSTALL_COMPLETE="Instalação de $SOLUTION concluída (GUARDE ESTA INFORMAÇÃO)"
 MSG_URL=" URL: http://"
 MSG_IP=" IP:  http://"
-MSG_INSTALL_PATH=" Install path: "
-MSG_INSTALLED_VER=" Installed version: "
-MSG_DB_NAME=" Database name: "
-MSG_DB_USER=" DB User: "
-MSG_DB_PASS=" DB Pass: "
-MSG_DB_ROOT=" MySQL root password: "
+MSG_INSTALL_PATH=" Caminho de instalação: "
+MSG_INSTALLED_VER=" Versão instalada: "
+MSG_DB_NAME=" Nome da base de dados: "
+MSG_DB_USER=" Utilizador da BD: "
+MSG_DB_PASS=" Palavra-passe da BD: "
+MSG_DB_ROOT=" Palavra-passe root do MySQL: "
