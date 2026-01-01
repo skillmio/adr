@@ -139,12 +139,13 @@ info_msg "[5/6] ${MSG_INSTALL_PHPMYADMIN}"
 # --- [6/6] ADJUSTING FIREWALL ---
 info_msg "[6/6] ${MSG_FIREWALL}"
 {
-sudo firewall-cmd --permanent --add-service=http
-sudo firewall-cmd --permanent --add-service=https
-sudo firewall-cmd --permanent --add-port=${PORT}/tcp
-sudo firewall-cmd --reload
+if systemctl is-active --quiet firewalld; then   # ← set -e safe
+  sudo firewall-cmd --permanent --add-service=http
+  sudo firewall-cmd --permanent --add-service=https
+  sudo firewall-cmd --permanent --add-port=${PORT}/tcp
+  sudo firewall-cmd --reload
+fi
 } >>"$LOGPATH" 2>&1
-
 
 # --- EXTRA GRAB INSTALLED VERSION ---
 MARIADB_VERSION=$(rpm -q mariadb-server --qf '%{VERSION}-%{RELEASE}\n')
