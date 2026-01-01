@@ -15,7 +15,7 @@
 | Roles            | Description                         | AL 10 |
 |------------------|-------------------------------------|-------|
 | FreeIPA          | Identity Management Server          | 🟡    |
-| MariaDB          | Database Server                     | 🟡    |
+| MariaDB          | Database Server                     | 🟢    |
 | PostgreSQL       | Database Server                     | 🟡    |
 | GLPI             | ITSM Server                         | 🟡    |
 | Ansible          | Automation Server                   | 🟡    |
