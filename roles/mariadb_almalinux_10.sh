@@ -51,16 +51,31 @@ MYSQL_ROOT_PASS="$(tr -dc 'A-Za-z0-9#.$' </dev/urandom | head -c 24)"
 info_msg "${MSG_START}"
 info_msg "${MSG_LOGPATH}"
 
-# --- [1/2] INSTALLING PREREQUISITES ---
-info_msg "[1/2] ${MSG_INSTALL_PREREQUISITES}"
+# --- USER PROMPTS ---
+read -p "${MSG_PROMPT_IP} ($(hostname -I | awk '{print $1}')): " SERVER_IP
+SERVER_IP=${SERVER_IP:-$(hostname -I | awk '{print $1}')}
+
+read -p "${MSG_PROMPT_URL} ($(hostname -f)): " ACCESS_URL
+ACCESS_URL=${ACCESS_URL:-$(hostname -f)}
+
+info_msg "${MSG_USING_IP}: $SERVER_IP"
+info_msg "${MSG_USING_URL}: $ACCESS_URL"
+
+
+
+
+# --- [1/6] INSTALLING PREREQUISITES ---
+info_msg "[1/6] ${MSG_INSTALL_PREREQUISITES}"
 {
-sudo dnf install -y expect epel-release
+sudo dnf install -y epel-release wget 
+sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-10.rpm
+
 
 } >>"$LOGPATH" 2>&1
 
 
-# --- [2/2] INSTALLING MARIADB ---
-info_msg "[2/2] ${MSG_INSTALL_MARIADB}"
+# --- [2/6] INSTALLING MARIADB ---
+info_msg "[2/6] ${MSG_INSTALL_MARIADB}"
 {
   sudo dnf install -y mariadb-server
   sudo systemctl enable --now mariadb
@@ -87,6 +102,46 @@ SQL
 } >>"$LOGPATH" 2>&1
 
 
+# --- [3/6] INSTALLING APACHE ---
+info_msg "[3/6] ${MSG_INSTALL_APACHE}"
+{
+  sudo dnf install -y httpd
+  sudo systemctl enable --now httpd
+} >>"$LOGPATH" 2>&1
+
+# --- [4/6] INSTALLING PHP & PHPMYADMIN---
+info_msg "[4/6] ${MSG_INSTALL_PHP}"
+{
+  sudo dnf install -y php php-mysqlnd php-gd php-xml php-mbstring \
+                     php-json php-curl php-zip php-intl
+  sudo systemctl restart httpd
+  php -v
+  sudo dnf install -y php-fedora-autoloader
+  sudo dnf --enablerepo=remi install phpMyAdmin -y
+  sudo systemctl restart httpd
+} >>"$LOGPATH" 2>&1
+
+
+# --- [6/6] INSTALLING PHPMYADMIN---
+info_msg "[5/6] ${MSG_INSTALL_PHPMYADMIN}"
+{
+  sudo dnf install php-json php-mbstring php-zip php-gd php-xml php-curl -y
+  sudo dnf install -y php-fedora-autoloader
+  sudo dnf --enablerepo=remi install phpMyAdmin -y
+  sudo systemctl restart httpd
+} >>"$LOGPATH" 2>&1
+
+
+
+# --- [6/6] ADJUSTING FIREWALL ---
+info_msg "[6/6] ${MSG_FIREWALL}"
+{
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --permanent --add-service=https
+sudo firewall-cmd --reload
+} >>"$LOGPATH" 2>&1
+
+
 # --- EXTRA GRAB INSTALLED VERSION ---
 MARIADB_VERSION=$(rpm -q mariadb-server --qf '%{VERSION}-%{RELEASE}\n')
 
@@ -96,6 +151,8 @@ MARIADB_VERSION=$(rpm -q mariadb-server --qf '%{VERSION}-%{RELEASE}\n')
 info_msg "=================================================================="
 info_msg " ${MSG_INSTALL_COMPLETE}"
 info_msg "------------------------------------------------------------------"
+info_msg " ${MSG_URL}${ACCESS_URL}"
+info_msg " ${MSG_IP}${SERVER_IP}"
 info_msg " ${MSG_INSTALLED_VER}${SOLUTION}:${MARIADB_VERSION}"
 info_msg " ${MSG_DB_ROOT}${MYSQL_ROOT_PASS}"
 info_msg " ${MSG_LOGPATH}"
