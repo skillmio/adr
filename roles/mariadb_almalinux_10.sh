@@ -41,6 +41,7 @@ fi
 
 
 # === GLOBAL VARIABLES ===
+PORT=3306
 TMP_DIR="/tmp"
 MYSQL_ROOT_PASS="$(tr -dc 'A-Za-z0-9#.$' </dev/urandom | head -c 24)"
 
@@ -139,6 +140,7 @@ info_msg "[6/6] ${MSG_FIREWALL}"
 {
 sudo firewall-cmd --permanent --add-service=http
 sudo firewall-cmd --permanent --add-service=https
+sudo firewall-cmd --permanent --add-port=${PORT}/tcp
 sudo firewall-cmd --reload
 } >>"$LOGPATH" 2>&1
 
