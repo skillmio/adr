@@ -1,25 +1,26 @@
 #!/bin/bash
 
 # ===========================================
-#   Beszel easy-install installation script
+# ADR's Beszel installation script - AL10
 # ===========================================
 
+# === PREPARATIONS ===
+
+set -e
 clear
 
-SOLUTION="beszel"
+# Define Solution early (needed for LOGPATH)
+SOLUTION="Beszel"
 
-# === LOGGING ===
+
+# --- LOGGING ---
 LOGPATH=$(realpath "beszel_install_$(date +%s).log")
 
 function info_msg() {
   echo "$1" | tee -a "$LOGPATH"
 }
 
-# === GLOBAL VARIABLES ===
-PORT=8090
-INSTALL_DIR="/opt/beszel"
-GITHUB_PROXY_URL="https://ghfast.top/"
-TMP_DIR="/tmp"
+# --- LANGUAGE ---
 CONFIG_FILE="$HOME/.config/adr/config"
 LOCALES_DIR="$HOME/.config/adr/locales"
 
@@ -37,6 +38,13 @@ else
   info_msg "Locale $LANG_CODE not found, falling back to English."
   source "$LOCALES_DIR/en/messages.sh"
 fi
+
+# === GLOBAL VARIABLES ===
+PORT=8090
+INSTALL_DIR="/opt/beszel"
+GITHUB_PROXY_URL="https://ghfast.top/"
+TMP_DIR="/tmp"
+
 
 # === FUNCTIONS ===
 
@@ -162,42 +170,46 @@ function configure_firewall() {
 
 # === EXECUTION FLOW ===
 
-info_msg "[1/9] ${MSG_STEP_COLLECT}"
-info_msg "${MSG_TAIL_HINT}"
-info_msg "  ${MSG_TAIL_CMD} ${LOGPATH}"
+
+# --- Hello Msg ---
+info_msg "${MSG_START}"
+info_msg "${MSG_LOGPATH}"
+
+# --- USER PROMPTS ---
 prompt_user_inputs
 
-info_msg "[2/9] ${MSG_STEP_VERSION}"
+
+# --- [1/4] INSTALLING PREREQUISITES ---
+info_msg "[1/] ${MSG_INSTALL_PREREQUISITES}"
 get_latest_version >> "$LOGPATH" 2>&1
-
-info_msg "[3/9] ${MSG_STEP_PACKAGES}"
 install_required_packages >> "$LOGPATH" 2>&1
-
-info_msg "[4/9] ${MSG_STEP_USER}"
 ensure_beszel_user >> "$LOGPATH" 2>&1
-
-info_msg "[5/9] ${MSG_STEP_ARCH}"
 detect_architecture >> "$LOGPATH" 2>&1
 
-info_msg "[6/9] ${MSG_STEP_DOWNLOAD}"
+# --- [2/4] INSTALLING BESZEL ---
+info_msg "[2/4] ${MSG_INSTALL_SOLUTION}"
 download_beszel >> "$LOGPATH" 2>&1
-
-info_msg "[7/9] ${MSG_STEP_INSTALL}"
 install_beszel >> "$LOGPATH" 2>&1
-
-info_msg "[8/9] ${MSG_STEP_SERVICES}"
 configure_systemd >> "$LOGPATH" 2>&1
+
+# --- [3/4] INSTALLING NGINX ---
+info_msg "[3/4] ${MSG_INSTALL_NGINX}"
 configure_nginx >> "$LOGPATH" 2>&1
 
-info_msg "[9/9] ${MSG_STEP_FIREWALL}"
+# --- [4/4] ADJUSTING FIREWALL ---
+info_msg "[4/4] ${MSG_FIREWALL}"
 configure_firewall >> "$LOGPATH" 2>&1
 
-# === SAVE THIS INFORMATION ===
-info_msg "------------------------------------------------------------"
-info_msg "${MSG_SAVE_HEADER}"
-info_msg "${MSG_SAVE_VERSION}: v${version}"
-info_msg "${MSG_SAVE_PATH}: ${INSTALL_DIR}"
-info_msg "${MSG_SAVE_SERVICE}: beszel-hub.service"
-info_msg "${MSG_SAVE_URL}: http://${SERVER_IP} or http://${ACCESS_URL}"
-info_msg "${MSG_SAVE_LOG}: ${LOGPATH}"
-info_msg "------------------------------------------------------------"
+# === SAVE THIS INFO ===
+info_msg "=================================================================="
+info_msg " ${MSG_INSTALL_COMPLETE}"
+info_msg "------------------------------------------------------------------"
+info_msg " ${MSG_URL}${ACCESS_URL}"
+info_msg " ${MSG_IP}${SERVER_IP}"
+info_msg " ${MSG_INSTALL_PATH}${INSTALL_DIR}"
+info_msg " ${MSG_INSTALLED_VER}${SOLUTION}:${WP_VERSION}"
+info_msg " ${MSG_LOGPATH}"
+info_msg "=================================================================="
+
+
+
