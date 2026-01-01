@@ -26,9 +26,6 @@ In simple terms:
 - Choosing cloud services only when they’re cheaper or more flexible than running your own servers.
 
 
-Here’s a **cleanly integrated addition** you can append to your article. I’ve kept the tone consistent, structured it clearly, and explained **what a cost-effective infrastructure looks like** and **how ADR supports it**, without changing your existing content.
-
-
 
 ## What a Cost-Effective Infrastructure Looks Like
 
