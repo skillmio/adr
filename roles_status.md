@@ -40,3 +40,5 @@
 | immich           | Photo Management Server             | 🟡    |
 | MantisBT         | Bug & Issue Tracking Server         | 🟡    |
 | Cachet           | Status Page Server                  | 🟡    |
+| Homer            | Application Dashboard Server        | 🟡    |
+| Discourse        | Community Forum Server              | 🟡    |
