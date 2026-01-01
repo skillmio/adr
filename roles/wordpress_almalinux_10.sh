@@ -19,8 +19,6 @@ function info_msg() {
   echo "$1" | tee -a "$LOGPATH"
 }
 
-
-
 # --- LANGUAGE ---
 CONFIG_FILE="$HOME/.config/adr/config"
 LOCALES_DIR="$HOME/.config/adr/locales"
@@ -66,7 +64,7 @@ info_msg "${MSG_USING_URL}: $ACCESS_URL"
 info_msg "[1/6] ${MSG_INSTALL_PREREQUISITES}"
 {
 sudo dnf install -y epel-release
-sudo dnf install -y wget tar 
+sudo dnf install -y wget curl tar   # ← added curl
 } >>"$LOGPATH" 2>&1
 
 # --- [2/6] INSTALLING MARIADB ---
@@ -75,9 +73,10 @@ info_msg "[2/6] ${MSG_INSTALL_MARIADB}"
   sudo dnf install -y mariadb-server
   sudo systemctl enable --now mariadb
 
-  mysql -u root -e "CREATE DATABASE ${DB_NAME} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-  mysql -u root -e "CREATE USER '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASS}';"
-  mysql -u root -e "GRANT ALL ON ${DB_NAME}.* TO '${DB_USER}'@'localhost'; FLUSH PRIVILEGES;"
+  # use socket auth consistently before setting root password
+  sudo mysql -e "CREATE DATABASE ${DB_NAME} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+  sudo mysql -e "CREATE USER '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASS}';"
+  sudo mysql -e "GRANT ALL ON ${DB_NAME}.* TO '${DB_USER}'@'localhost'; FLUSH PRIVILEGES;"
 
   sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASS}';"
   sudo mysql -uroot -p"${MYSQL_ROOT_PASS}" -e "DELETE FROM mysql.user WHERE User='';"
@@ -140,29 +139,31 @@ EOF
 # --- [6/6] ADJUSTING FIREWALL ---
 info_msg "[6/6] ${MSG_FIREWALL}"
 {
-sudo firewall-cmd --permanent --add-service=http
-sudo firewall-cmd --permanent --add-service=https
-sudo firewall-cmd --reload
+if systemctl is-active --quiet firewalld; then   # ← set -e safe
+  sudo firewall-cmd --permanent --add-service=http
+  sudo firewall-cmd --permanent --add-service=https
+  sudo firewall-cmd --reload
+fi
 } >>"$LOGPATH" 2>&1
 
-
 # --- EXTRA GRAB INSTALLED VERSION ---
-WP_VERSION=$(sed -n "s/^[[:space:]]*\$wp_version[[:space:]]*=[[:space:]]*'\([^']*\)'.*/\1/p" \
-  "${INSTALL_DIR}/wordpress/wp-includes/version.php")
-
-
+WP_VERSION="unknown"
+if [[ -f "${INSTALL_DIR}/wordpress/wp-includes/version.php" ]]; then
+  WP_VERSION=$(sed -n "s/^[[:space:]]*\$wp_version[[:space:]]*=[[:space:]]*'\([^']*\)'.*/\1/p" \
+    "${INSTALL_DIR}/wordpress/wp-includes/version.php")
+fi
 
 # === SAVE THIS INFO ===
 info_msg "=================================================================="
 info_msg " ${MSG_INSTALL_COMPLETE}"
 info_msg "------------------------------------------------------------------"
-info_msg " ${MSG_URL}${ACCESS_URL}"
-info_msg " ${MSG_IP}${SERVER_IP}"
-info_msg " ${MSG_INSTALL_PATH}${INSTALL_DIR}/wordpress"
-info_msg " ${MSG_INSTALLED_VER}${SOLUTION}:${WP_VERSION}"
-info_msg " ${MSG_DB_NAME}${DB_NAME}"
-info_msg " ${MSG_DB_USER}${DB_USER}"
-info_msg " ${MSG_DB_PASS}${DB_PASS}"
-info_msg " ${MSG_DB_ROOT}${MYSQL_ROOT_PASS}"
+info_msg " ${MSG_URL}: ${ACCESS_URL}"
+info_msg " ${MSG_IP}: ${SERVER_IP}"
+info_msg " ${MSG_INSTALL_PATH}: ${INSTALL_DIR}/wordpress"
+info_msg " ${MSG_INSTALLED_VER}: ${SOLUTION} ${WP_VERSION}"
+info_msg " ${MSG_DB_NAME}: ${DB_NAME}"
+info_msg " ${MSG_DB_USER}: ${DB_USER}"
+info_msg " ${MSG_DB_PASS}: ${DB_PASS}"
+info_msg " ${MSG_DB_ROOT}: ${MYSQL_ROOT_PASS}"
 info_msg " ${MSG_LOGPATH}"
 info_msg "=================================================================="
