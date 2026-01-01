@@ -163,9 +163,10 @@ EOF
 }
 
 function configure_firewall() {
-  firewall-cmd --permanent --add-service=http
-  firewall-cmd --permanent --add-service=https
-  firewall-cmd --reload
+  sudo firewall-cmd --permanent --add-service=http
+  sudo firewall-cmd --permanent --add-service=https
+  sudo firewall-cmd --permanent --add-port=${PORT}/tcp
+  sudo firewall-cmd --reload
 }
 
 # === EXECUTION FLOW ===
