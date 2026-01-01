@@ -35,11 +35,14 @@ REPAIR_START() { echo "A reparar o ADR (internet necessário)..."; }
 
 
 # === ROLE MSGs === 
+MSG_START="=== Starting $SOLUTION installation ==="
+MSG_LOGPATH="Log file: $LOGPATH"
 MSG_PROMPT_IP="Enter the IP address to use for accessing $SOLUTION"
 MSG_PROMPT_URL="Enter the URL or hostname to use for accessing $SOLUTION"
 MSG_USING_IP="IP has been set to"
 MSG_USING_URL="URL has been set to"
+MSG_INSTALL_PREREQUISITES="Installing Required Packages"
 MSG_INSTALL_MARIADB="Installing and Configure MariaDB"
 MSG_INSTALL_APACHE="Installing and Configure Apache"
 MSG_INSTALL_PHP="Installing and Configure PHP"
-MSG_INSTALL_SOLUTION="Installing and Configure "
+MSG_INSTALL_SOLUTION="Installing and Configure"
