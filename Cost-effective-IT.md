@@ -6,7 +6,7 @@ In simple terms:
 >[!Tip]
 >Get the most benefit from IT for the least money spent.
 
----
+
 
 ## What it usually involves
 
@@ -28,7 +28,7 @@ In simple terms:
 
 Here’s a **cleanly integrated addition** you can append to your article. I’ve kept the tone consistent, structured it clearly, and explained **what a cost-effective infrastructure looks like** and **how ADR supports it**, without changing your existing content.
 
----
+
 
 ## What a Cost-Effective Infrastructure Looks Like
 
@@ -60,7 +60,7 @@ These components form the backbone of the entire IT environment:
 * **MariaDB**
   MySQL-compatible database for applications like WordPress and business tools.
 
----
+
 
 ### IT Operations
 
@@ -83,7 +83,7 @@ These tools reduce operational effort, increase visibility, and improve security
 * **Zabbix** – Monitoring
   Infrastructure, application, and service monitoring with alerting.
 
----
+
 
 ### Business Productivity
 
@@ -103,7 +103,7 @@ These replace expensive SaaS subscriptions while keeping data in-house:
 * **Zimbra** – Email & Groupware
   Email, calendars, and collaboration in one platform.
 
----
+
 
 ## How ADR Helps Achieve Cost-Effective IT
 
