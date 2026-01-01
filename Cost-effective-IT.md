@@ -54,7 +54,7 @@ These components form the backbone of the entire IT environment:
 * **PostgreSQL**
   Enterprise-grade relational database with no licensing costs.
 
-* [X] **MariaDB**
+* **MariaDB**
   MySQL-compatible database for applications like WordPress and business tools.
 
 
