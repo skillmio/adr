@@ -6,15 +6,29 @@
 - 🟡 **Planned**
 - 🔴 **Not Supported**
 
->[!INFO]
+> [!NOTE]
 > AL stands for AlmaLinux
 
+## Roles
 
-| Roles        | Description        | AL 10 |
-|--------------|--------------------|-------|
-| Wordpress    | Web Server         | 🟢    |
-| Beszel       | Monitoring Server  | 🟢    |
-| MariaDB     | Database Server    | 🟡    |
-| PostgreSQL  | Database Server    | 🟡    |
-
-
+| Roles            | Description                         | AL 10 |
+|------------------|-------------------------------------|-------|
+| FreeIPA          | Identity Management Server          | 🟡    |
+| MariaDB          | Database Server                     | 🟡    |
+| PostgreSQL       | Database Server                     | 🟡    |
+| GLPI             | ITSM Server                         | 🟡    |
+| Ansible          | Automation Server                   | 🟡    |
+| Wazuh            | XDR & SIEM Server                   | 🟡    |
+| Graylog          | Log Management Server               | 🟡    |
+| Beszel           | Monitoring Server                   | 🟢    |
+| Zabbix           | Monitoring Server                   | 🟡    |
+| Nextcloud        | Collaboration & File Server         | 🟡    |
+| NextCloud HUB    | Collaboration Suite Server          | 🟡    |
+| Bookstack        | Documentation Server                | 🟡    |
+| Zimbra           | Mail & Collaboration Server         | 🟡    |
+| Wordpress        | Web Server                          | 🟢    |
+| Passbolt         | Password Management Server          | 🟡    |
+| InvoiceNinja     | Invoicing & Billing Server          | 🟡    |
+| MatterMost       | Team Messaging Server               | 🟡    |
+| Paperless NGX    | Document Management Server          | 🟡    |
+| Ollama + WebUI   | AI Inference & UI Server            | 🟡    |
