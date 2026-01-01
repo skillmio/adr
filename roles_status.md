@@ -22,9 +22,10 @@
 | Graylog          | Log Management Server               | 🟡    |
 | Beszel           | Monitoring Server                   | 🟢    |
 | Zabbix           | Monitoring Server                   | 🟡    |
-| Nextcloud        | Collaboration & File Server         | 🟡    |
+| OpenCloud        | Collaboration & File Server         | 🟡    |
 | NextCloud HUB    | Collaboration Suite Server          | 🟡    |
 | Bookstack        | Documentation Server                | 🟡    |
+| docmost          | Documentation & Knowledge Server    | 🟡    |
 | Zimbra           | Mail & Collaboration Server         | 🟡    |
 | Wordpress        | Web Server                          | 🟢    |
 | Passbolt         | Password Management Server          | 🟡    |
@@ -32,3 +33,10 @@
 | MatterMost       | Team Messaging Server               | 🟡    |
 | Paperless NGX    | Document Management Server          | 🟡    |
 | Ollama + WebUI   | AI Inference & UI Server            | 🟡    |
+| Plex             | Media Streaming Server              | 🟡    |
+| JellyFin         | Media Streaming Server              | 🟡    |
+| Pi-hole          | DNS Filtering Server                | 🟡    |
+| Home Assistant   | Home Automation Server              | 🟡    |
+| immich           | Photo Management Server             | 🟡    |
+| MantisBT         | Bug & Issue Tracking Server         | 🟡    |
+| Cachet           | Status Page Server                  | 🟡    |
