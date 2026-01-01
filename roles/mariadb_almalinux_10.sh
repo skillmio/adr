@@ -128,6 +128,7 @@ info_msg "[5/6] ${MSG_INSTALL_PHPMYADMIN}"
   sudo dnf install php-json php-mbstring php-zip php-gd php-xml php-curl -y
   sudo dnf install -y php-fedora-autoloader
   sudo dnf --enablerepo=remi install phpMyAdmin -y
+  sudo sed -i 's/^[[:space:]]*Require[[:space:]]\+local/Require all granted/' /etc/httpd/conf.d/phpMyAdmin.conf
   sudo systemctl restart httpd
 } >>"$LOGPATH" 2>&1
 
