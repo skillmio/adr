@@ -1,3 +1,5 @@
+[Check Roles Status](roles_status.md)
+
 <div align="center">
   <h1>Auto-Deploy Role (adr)</h1>
   <h3>
