@@ -153,9 +153,9 @@ WP_VERSION=$(sed -n "s/^[[:space:]]*\$wp_version[[:space:]]*=[[:space:]]*'\([^']
 
 
 # === SAVE THIS INFO ===
-info_msg "======================================="
+info_msg "=================================================================="
 info_msg " ${MSG_INSTALL_COMPLETE}"
-info_msg "---------------------------------------"
+info_msg "------------------------------------------------------------------"
 info_msg " ${MSG_URL}${ACCESS_URL}"
 info_msg " ${MSG_IP}${SERVER_IP}"
 info_msg " ${MSG_INSTALL_PATH}${INSTALL_DIR}/wordpress"
@@ -165,4 +165,4 @@ info_msg " ${MSG_DB_USER}${DB_USER}"
 info_msg " ${MSG_DB_PASS}${DB_PASS}"
 info_msg " ${MSG_DB_ROOT}${MYSQL_ROOT_PASS}"
 info_msg " ${MSG_LOGPATH}"
-info_msg "======================================="
+info_msg "=================================================================="
