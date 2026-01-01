@@ -44,6 +44,7 @@ fi
 PORT=3306
 TMP_DIR="/tmp"
 MYSQL_ROOT_PASS="$(tr -dc 'A-Za-z0-9#.$' </dev/urandom | head -c 24)"
+DB_USER="root"
 
 
 # === EXECUTION FLOW ===
@@ -84,7 +85,7 @@ info_msg "[2/6] ${MSG_INSTALL_MARIADB}"
 
   sudo mysql <<SQL
 -- Set root password
-ALTER USER 'root'@'localhost' IDENTIFIED BY '${MARIADB_ROOT_PASSWORD}';
+ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASS}';
 
 -- Remove anonymous users
 DELETE FROM mysql.user WHERE User='';
@@ -154,9 +155,10 @@ MARIADB_VERSION=$(rpm -q mariadb-server --qf '%{VERSION}-%{RELEASE}\n')
 info_msg "=================================================================="
 info_msg " ${MSG_INSTALL_COMPLETE}"
 info_msg "------------------------------------------------------------------"
-info_msg " ${MSG_URL}${ACCESS_URL}"
-info_msg " ${MSG_IP}${SERVER_IP}"
-info_msg " ${MSG_INSTALLED_VER}${SOLUTION}:${MARIADB_VERSION}"
+info_msg " ${MSG_URL}${ACCESS_URL}/phpmyadmin"
+info_msg " ${MSG_IP}${SERVER_IP}/phpmyadmin"
+info_msg " ${MSG_INSTALLED_VER}${SOLUTION}-${MARIADB_VERSION}"
+info_msg " ${MSG_DB_USER}${DB_USER}"
 info_msg " ${MSG_DB_ROOT}${MYSQL_ROOT_PASS}"
 info_msg " ${MSG_LOGPATH}"
 info_msg "=================================================================="
