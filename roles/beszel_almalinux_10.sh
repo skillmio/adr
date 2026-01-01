@@ -180,7 +180,7 @@ prompt_user_inputs
 
 
 # --- [1/4] INSTALLING PREREQUISITES ---
-info_msg "[1/] ${MSG_INSTALL_PREREQUISITES}"
+info_msg "[1/4] ${MSG_INSTALL_PREREQUISITES}"
 get_latest_version >> "$LOGPATH" 2>&1
 install_required_packages >> "$LOGPATH" 2>&1
 ensure_beszel_user >> "$LOGPATH" 2>&1
