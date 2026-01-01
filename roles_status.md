@@ -6,8 +6,8 @@
 - 🟡 **Planned**
 - 🔴 **Not Supported**
 
-
-
+>[!INFO]
+> AL stands for AlmaLinux
 
 
 | Roles        | Description        | AL 10 |
