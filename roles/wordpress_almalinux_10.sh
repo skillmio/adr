@@ -62,15 +62,15 @@ info_msg "${MSG_USING_URL}: $ACCESS_URL"
 
 # === INSTALLATION STEPS ===
 
-# --- [1/5] INSTALLING PREREQUISITES ---
-info_msg "[1/5] ${MSG_INSTALL_PREREQUISITES}"
+# --- [1/6] INSTALLING PREREQUISITES ---
+info_msg "[1/6] ${MSG_INSTALL_PREREQUISITES}"
 {
 sudo dnf install -y epel-release
 sudo dnf install -y wget tar 
 } >>"$LOGPATH" 2>&1
 
-# --- [2/5] INSTALLING MARIADB ---
-info_msg "[2/5] ${MSG_INSTALL_MARIADB}"
+# --- [2/6] INSTALLING MARIADB ---
+info_msg "[2/6] ${MSG_INSTALL_MARIADB}"
 {
   sudo dnf install -y mariadb-server
   sudo systemctl enable --now mariadb
@@ -85,15 +85,15 @@ info_msg "[2/5] ${MSG_INSTALL_MARIADB}"
   sudo mysql -uroot -p"${MYSQL_ROOT_PASS}" -e "FLUSH PRIVILEGES;"
 } >>"$LOGPATH" 2>&1
 
-# --- [3/5] INSTALLING APACHE ---
-info_msg "[3/5] ${MSG_INSTALL_APACHE}"
+# --- [3/6] INSTALLING APACHE ---
+info_msg "[3/6] ${MSG_INSTALL_APACHE}"
 {
   sudo dnf install -y httpd
   sudo systemctl enable --now httpd
 } >>"$LOGPATH" 2>&1
 
-# --- [4/5] INSTALLING PHP ---
-info_msg "[4/5] ${MSG_INSTALL_PHP}"
+# --- [4/6] INSTALLING PHP ---
+info_msg "[4/6] ${MSG_INSTALL_PHP}"
 {
   sudo dnf install -y php php-mysqlnd php-gd php-xml php-mbstring \
                      php-json php-curl php-zip php-intl
@@ -101,8 +101,8 @@ info_msg "[4/5] ${MSG_INSTALL_PHP}"
   php -v
 } >>"$LOGPATH" 2>&1
 
-# --- [5/5] INSTALLING WORDPRESS ---
-info_msg "[5/5] ${MSG_INSTALL_SOLUTION}"
+# --- [5/6] INSTALLING WORDPRESS ---
+info_msg "[5/6] ${MSG_INSTALL_SOLUTION}"
 {
   cd /tmp
   curl -O https://wordpress.org/latest.tar.gz
@@ -137,16 +137,25 @@ EOF
   sudo systemctl restart httpd
 } >>"$LOGPATH" 2>&1
 
+# --- [6/6] ADJUSTING FIREWALL ---
+info_msg "[6/6] ${MSG_FIREWALL}"
+{
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --permanent --add-service=https
+sudo firewall-cmd --reload
+} >>"$LOGPATH" 2>&1
+
+
 # === SAVE THIS INFO ===
 info_msg "======================================="
-info_msg " $SOLUTION installation completed"
+info_msg " ${MSG_INSTALL_COMPLETE}"
 info_msg "---------------------------------------"
-info_msg " URL: http://${ACCESS_URL}"
-info_msg " IP:  http://${SERVER_IP}"
-info_msg " Install path: ${INSTALL_DIR}/wordpress"
-info_msg " Database: ${DB_NAME}"
-info_msg " DB User: ${DB_USER}"
-info_msg " DB Pass: ${DB_PASS}"
-info_msg " MySQL root password: ${MYSQL_ROOT_PASS}"
-info_msg " Log file: ${LOGPATH}"
+info_msg " ${MSG_URL}"
+info_msg " ${MSG_IP}"
+info_msg " ${MSG_INSTALL_PATH}/wordpress"
+info_msg " ${MSG_DB_NAME}"
+info_msg " ${MSG_DB_USER}"
+info_msg " ${MSG_DB_PASS}"
+info_msg " ${MSG_DB_ROOT}"
+info_msg " ${MSG_LOGPATH}"
 info_msg "======================================="
