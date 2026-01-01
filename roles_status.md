@@ -7,6 +7,9 @@
 - 🔴 **Not Supported**
 
 
+
+
+
 | Roles        | Description        | AL 10 |
 |--------------|--------------------|-------|
 | Wordpress    | Web Server         | 🟢    |
