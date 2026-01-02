@@ -24,7 +24,7 @@
   </p>
 
   <img
-    src="https://github.com/skillmio/adr/blob/main/adr-image.png?raw=true"
+    src="https://github.com/skillmio/adr/blob/main/static/adr-image.png?raw=true"
     alt="ADR example"
     width="80%"
   />
