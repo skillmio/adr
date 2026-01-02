@@ -6,7 +6,7 @@
 
 </div>
 
-📦 [Ver serviços disponíveis:](roles_status.md) 4
+📦 [Ver serviços disponíveis:](roles_status.md)
 
 
 <div align="center">
