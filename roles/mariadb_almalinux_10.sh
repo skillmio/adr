@@ -59,9 +59,8 @@ SERVER_IP=${SERVER_IP:-$(hostname -I | awk '{print $1}')}
 
 info_msg "${MSG_USING_IP}: $SERVER_IP"
 
-echo""
 echo " --- "
-echo""
+echo ""
 
 # --- [1/6] INSTALLING PREREQUISITES ---
 info_msg "[1/6] ${MSG_INSTALL_PREREQUISITES}"
