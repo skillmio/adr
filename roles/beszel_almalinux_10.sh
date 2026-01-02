@@ -163,10 +163,12 @@ EOF
 }
 
 function configure_firewall() {
-  sudo firewall-cmd --permanent --add-service=http
-  sudo firewall-cmd --permanent --add-service=https
-  sudo firewall-cmd --permanent --add-port=${PORT}/tcp
-  sudo firewall-cmd --reload
+  if systemctl is-active --quiet firewalld; then   # ← set -e safe
+    sudo firewall-cmd --permanent --add-service=http
+    sudo firewall-cmd --permanent --add-service=https
+    sudo firewall-cmd --permanent --add-port=${PORT}/tcp
+    sudo firewall-cmd --reload
+  fi
 }
 
 # === EXECUTION FLOW ===
