@@ -1,6 +1,5 @@
-📦 Available roles: 4
+📦 [Check Available roles](roles_status.md): 4
 
-[Check Roles Status](roles_status.md)
 
 <div align="center">
   <h1>Auto-Deploy Role (adr)</h1>
