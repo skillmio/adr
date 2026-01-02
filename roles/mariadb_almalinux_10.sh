@@ -111,7 +111,7 @@ info_msg "[3/6] ${MSG_INSTALL_APACHE}"
   sudo systemctl enable --now httpd
 } >>"$LOGPATH" 2>&1
 
-# --- [4/6] INSTALLING PHP & PHPMYADMIN---
+# --- [4/6] INSTALLING PHP ---
 info_msg "[4/6] ${MSG_INSTALL_PHP}"
 {
   sudo dnf install -y php php-mysqlnd php-gd php-xml php-mbstring \
@@ -124,7 +124,7 @@ info_msg "[4/6] ${MSG_INSTALL_PHP}"
 } >>"$LOGPATH" 2>&1
 
 
-# --- [6/6] INSTALLING PHPMYADMIN---
+# --- [6/6] INSTALLING PHPMYADMIN ---
 info_msg "[5/6] ${MSG_INSTALL_PHPMYADMIN}"
 {
   sudo dnf install php-json php-mbstring php-zip php-gd php-xml php-curl -y
