@@ -58,14 +58,12 @@ info_msg "${MSG_LOGPATH}"
 read -p "${MSG_PROMPT_IP} ($(hostname -I | awk '{print $1}')): " SERVER_IP
 SERVER_IP=${SERVER_IP:-$(hostname -I | awk '{print $1}')}
 
-read -p "${MSG_PROMPT_URL} ($(hostname -f)): " ACCESS_URL
-ACCESS_URL=${ACCESS_URL:-$(hostname -f)}
-
 info_msg "${MSG_USING_IP}: $SERVER_IP"
-info_msg "${MSG_USING_URL}: $ACCESS_URL"
 
-# --- [1/] INSTALLING PREREQUISITES ---
-info_msg "[1/] ${MSG_INSTALL_PREREQUISITES}"
+echo " --- "
+
+# --- [1/5] INSTALLING PREREQUISITES ---
+info_msg "[1/5] ${MSG_INSTALL_PREREQUISITES}"
 {
 sudo dnf install -y epel-release wget 
 
@@ -78,8 +76,8 @@ sudo rpm -i https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-redhat-
 } >>"$LOGPATH" 2>&1
 
 
-# --- [2/] INSTALLING POSTGRESQL ---
-info_msg "[2/] ${MSG_INSTALL_POSTGSQL}"
+# --- [2/5] INSTALLING POSTGRESQL ---
+info_msg "[2/5] ${MSG_INSTALL_POSTGSQL}"
 {
 # Install PostgreSQL:
 sudo dnf install -y postgresql18-server
@@ -92,8 +90,8 @@ sudo systemctl start postgresql-18
 } >>"$LOGPATH" 2>&1
 
 
-# --- [3/] INSTALLING APACHE ---
-info_msg "[3/] ${MSG_INSTALL_APACHE}"
+# --- [3/5] INSTALLING APACHE ---
+info_msg "[3/5] ${MSG_INSTALL_APACHE}"
 {
   sudo dnf install -y httpd
   sudo systemctl enable --now httpd
@@ -101,8 +99,8 @@ info_msg "[3/] ${MSG_INSTALL_APACHE}"
 
 
 
-# --- [4/] INSTALLING PGADMIN ---
-info_msg "[4/] ${MSG_INSTALL_PGADMIN}"
+# --- [4/5] INSTALLING PGADMIN ---
+info_msg "[4/5] ${MSG_INSTALL_PGADMIN}"
 {
 # Install for web mode only.
 sudo dnf install -y pgadmin4-web
@@ -134,9 +132,9 @@ POSTGRES_VERSION=$(rpm -q postgresql18-server --qf '%{VERSION}-%{RELEASE}\n')
 info_msg "=================================================================="
 info_msg " ${MSG_INSTALL_COMPLETE}"
 info_msg "------------------------------------------------------------------"
-info_msg " ${MSG_IP}${SERVER_IP}/pgadmin4"
 info_msg " ${MSG_INSTALLED_VER}${SOLUTION}-${POSTGRES_VERSION}"
-info_msg " ${MSG_DB_USER}${PGADMIN_EMAIL}"
-info_msg " ${MSG_DB_ROOT}${PGADMIN_PASS}"
+info_msg " ${MSG_IP}${SERVER_IP}/pgadmin4"
+info_msg " ${MSG_USER_LOGIN}${PGADMIN_EMAIL}"
+info_msg " ${MSG_USER_PASS}${PGADMIN_PASS}"
 info_msg " ${MSG_LOGPATH}"
 info_msg "=================================================================="
