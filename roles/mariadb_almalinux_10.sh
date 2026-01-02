@@ -10,7 +10,7 @@ set -e
 clear
 
 # Define Solution early (needed for LOGPATH)
-SOLUTION="MySQL"
+SOLUTION="MariaDB"
 
 
 # --- LOGGING ---
