@@ -36,7 +36,7 @@ REPAIR_START() { echo "Réparation d’ADR (connexion Internet requise)..."; }
 
 # === ROLE MSGs === 
 MSG_START="=== Démarrage de l’installation de $SOLUTION ==="
-MSG_LOGPATH=" Fichier journal : $LOGPATH"
+MSG_LOGPATH="Sensitive log file (delete after use): $LOGPATH"
 MSG_PROMPT_IP="Saisissez l’adresse IP qui sera utilisée pour accéder à $SOLUTION"
 MSG_PROMPT_URL="Saisissez l’URL ou le nom d’hôte qui sera utilisé pour accéder à $SOLUTION"
 MSG_USING_IP="L’adresse IP a été définie sur"
