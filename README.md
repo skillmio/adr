@@ -1,3 +1,4 @@
+📦 Available roles: `$(ls roles | wc -l)`
 [Check Roles Status](roles_status.md)
 
 <div align="center">
