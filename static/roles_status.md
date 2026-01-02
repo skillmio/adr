@@ -1,6 +1,10 @@
+<div align="right">
+Back to ReadMe
+[![EN](https://img.shields.io/badge/lang-EN-blue)](../README.md)
+[![FR](https://img.shields.io/badge/lang-FR-blue)](README.fr.md)
+[![PT](https://img.shields.io/badge/lang-PT-blue)](README.pt.md)
 
-[Back to README](../README.md)
-
+</div>
 
 ### Status Legend
 - 🟢 **Available**
