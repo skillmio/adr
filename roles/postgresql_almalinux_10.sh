@@ -61,7 +61,7 @@ SERVER_IP=${SERVER_IP:-$(hostname -I | awk '{print $1}')}
 info_msg "${MSG_USING_IP}: $SERVER_IP"
 
 echo " --- "
-echo ""
+
 
 # --- [1/5] INSTALLING PREREQUISITES ---
 info_msg "[1/5] ${MSG_INSTALL_PREREQUISITES}"
@@ -130,6 +130,7 @@ POSTGRES_VERSION=$(rpm -q postgresql18-server --qf '%{VERSION}-%{RELEASE}\n')
 
 
 # === SAVE THIS INFO ===
+echo ""
 info_msg "=================================================================="
 info_msg " ${MSG_INSTALL_COMPLETE}"
 info_msg "------------------------------------------------------------------"
