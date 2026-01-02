@@ -36,7 +36,7 @@ REPAIR_START() { echo "Repairing ADR (internet required)..."; }
 
 # === ROLE MSGs === 
 MSG_START="=== Starting $SOLUTION installation ==="
-MSG_LOGPATH="Delete log file when finished (sensitive data): $LOGPATH"
+MSG_LOGPATH="Sensitive log file (delete after use): $LOGPATH"
 MSG_PROMPT_IP="Enter the IP address that will be used to access $SOLUTION"
 MSG_PROMPT_URL="Enter the URL or Hostname that will be used to access $SOLUTION"
 MSG_USING_IP="IP has been set to"
