@@ -19,6 +19,7 @@
 | PostgreSQL       | Database Server                     | 🟢    |
 | GLPI             | ITSM Server                         | 🟡    |
 | Ansible          | Automation Server                   | 🟡    |
+| Gitea            | Code Hosting                        | 🟡    |
 | Wazuh            | XDR & SIEM Server                   | 🟡    |
 | Graylog          | Log Management Server               | 🟡    |
 | Beszel           | Monitoring Server                   | 🟢    |
