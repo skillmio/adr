@@ -57,13 +57,7 @@ info_msg "${MSG_LOGPATH}"
 read -p "${MSG_PROMPT_IP} ($(hostname -I | awk '{print $1}')): " SERVER_IP
 SERVER_IP=${SERVER_IP:-$(hostname -I | awk '{print $1}')}
 
-read -p "${MSG_PROMPT_URL} ($(hostname -f)): " ACCESS_URL
-ACCESS_URL=${ACCESS_URL:-$(hostname -f)}
-
 info_msg "${MSG_USING_IP}: $SERVER_IP"
-info_msg "${MSG_USING_URL}: $ACCESS_URL"
-
-
 
 
 # --- [1/6] INSTALLING PREREQUISITES ---
@@ -156,7 +150,6 @@ MARIADB_VERSION=$(rpm -q mariadb-server --qf '%{VERSION}-%{RELEASE}\n')
 info_msg "=================================================================="
 info_msg " ${MSG_INSTALL_COMPLETE}"
 info_msg "------------------------------------------------------------------"
-info_msg " ${MSG_URL}${ACCESS_URL}/phpmyadmin"
 info_msg " ${MSG_IP}${SERVER_IP}/phpmyadmin"
 info_msg " ${MSG_INSTALLED_VER}${SOLUTION}-${MARIADB_VERSION}"
 info_msg " ${MSG_DB_USER}${DB_USER}"
