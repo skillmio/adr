@@ -43,7 +43,7 @@ fi
 # === GLOBAL VARIABLES ===
 PORT=5432
 TMP_DIR="/tmp"
-PGADMIN_EMAIL="sadmin.$(tr -dc a-z0-9 </dev/urandom | head -c 8)@$(hostname -d)"
+PGADMIN_EMAIL="adr.$(tr -dc a-z0-9 </dev/urandom | head -c 8)@$(hostname -d)"
 PGADMIN_PASS="$(tr -dc 'A-Za-z0-9#.$' </dev/urandom | head -c 24)"
 
 
