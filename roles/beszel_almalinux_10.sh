@@ -14,7 +14,7 @@ SOLUTION="Beszel"
 
 
 # --- LOGGING ---
-LOGPATH=$(realpath "beszel_install_$(date +%s).log")
+LOGPATH="/tmp/${SOLUTION}_install_$(date +%s).log"
 
 function info_msg() {
   echo "$1" | tee -a "$LOGPATH"
@@ -179,7 +179,7 @@ info_msg "${MSG_LOGPATH}"
 # --- USER PROMPTS ---
 prompt_user_inputs
 
-
+echo " --- "
 # --- [1/4] INSTALLING PREREQUISITES ---
 info_msg "[1/4] ${MSG_INSTALL_PREREQUISITES}"
 get_latest_version >> "$LOGPATH" 2>&1
@@ -202,6 +202,7 @@ info_msg "[4/4] ${MSG_FIREWALL}"
 configure_firewall >> "$LOGPATH" 2>&1
 
 # === SAVE THIS INFO ===
+echo ""
 info_msg "=================================================================="
 info_msg " ${MSG_INSTALL_COMPLETE}"
 info_msg "------------------------------------------------------------------"
