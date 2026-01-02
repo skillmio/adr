@@ -60,6 +60,7 @@ ACCESS_URL=${ACCESS_URL:-$(hostname -f)}
 info_msg "${MSG_USING_IP}: $SERVER_IP"
 info_msg "${MSG_USING_URL}: $ACCESS_URL"
 
+echo " --- "
 # --- [1/6] INSTALLING PREREQUISITES ---
 info_msg "[1/6] ${MSG_INSTALL_PREREQUISITES}"
 {
@@ -154,6 +155,7 @@ if [[ -f "${INSTALL_DIR}/wordpress/wp-includes/version.php" ]]; then
 fi
 
 # === SAVE THIS INFO ===
+echo ""
 info_msg "=================================================================="
 info_msg " ${MSG_INSTALL_COMPLETE}"
 info_msg "------------------------------------------------------------------"
