@@ -1,3 +1,11 @@
+<div align="right">
+
+[![EN](https://img.shields.io/badge/lang-EN-blue)](README.md)
+[![FR](https://img.shields.io/badge/lang-FR-blue)](README.fr.md)
+[![PT](https://img.shields.io/badge/lang-PT-blue)](README.pt.md)
+
+</div>
+
 📦 [Check available roles:](roles_status.md) 4
 
 
