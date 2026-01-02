@@ -6,7 +6,7 @@
 
 </div>
 
-📦 [Check available roles:](roles_status.md)
+📦 [Check available roles:](static/roles_status.md)
 
 
 <div align="center">
