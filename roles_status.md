@@ -16,7 +16,7 @@
 |------------------|-------------------------------------|-------|
 | FreeIPA          | Identity Management Server          | 🟡    |
 | MariaDB          | Database Server                     | 🟢    |
-| PostgreSQL       | Database Server                     | 🟡    |
+| PostgreSQL       | Database Server                     | 🟢    |
 | GLPI             | ITSM Server                         | 🟡    |
 | Ansible          | Automation Server                   | 🟡    |
 | Wazuh            | XDR & SIEM Server                   | 🟡    |
