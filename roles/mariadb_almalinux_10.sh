@@ -59,6 +59,9 @@ SERVER_IP=${SERVER_IP:-$(hostname -I | awk '{print $1}')}
 
 info_msg "${MSG_USING_IP}: $SERVER_IP"
 
+echo""
+echo " --- "
+echo""
 
 # --- [1/6] INSTALLING PREREQUISITES ---
 info_msg "[1/6] ${MSG_INSTALL_PREREQUISITES}"
@@ -150,9 +153,10 @@ MARIADB_VERSION=$(rpm -q mariadb-server --qf '%{VERSION}-%{RELEASE}\n')
 info_msg "=================================================================="
 info_msg " ${MSG_INSTALL_COMPLETE}"
 info_msg "------------------------------------------------------------------"
-info_msg " ${MSG_IP}${SERVER_IP}/phpmyadmin"
 info_msg " ${MSG_INSTALLED_VER}${SOLUTION}-${MARIADB_VERSION}"
+info_msg " ${MSG_IP}${SERVER_IP}/phpmyadmin"
 info_msg " ${MSG_DB_USER}${DB_USER}"
+info_msg " ${MSG_USER_PASS}${MYSQL_ROOT_PASS}"
 info_msg " ${MSG_DB_ROOT}${MYSQL_ROOT_PASS}"
 info_msg " ${MSG_LOGPATH}"
 info_msg "=================================================================="
