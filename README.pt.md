@@ -63,18 +63,18 @@ Seja para servidores, homelabs ou automação de deploys, o ADR torna o processo
 * **Pronto para automação**
   Ideal para uso manual ou integração em scripts.
 
-### Benefits
+### Benefícios
 
-* **Save time** by avoiding manual setup and troubleshooting
-* **Reduce complexity** with clear, predictable deployments
-* **Repeatable results** across systems and environments
-* **Faster service delivery** from fresh system to running service
-* **Safer defaults** with built-in configuration and best practices
+* **Poupa tempo** ao evitar configurações manuais e resolução de problemas
+* **Reduz a complexidade** com implementações claras e previsíveis
+* **Resultados repetíveis** em diferentes sistemas e ambientes
+* **Entrega de serviços** mais rápida, desde um sistema limpo até ao serviço em funcionamento
+* **Configurações por defeito** mais seguras, com boas práticas integradas
 
 
-## Installation
+## Instalação
 
-Install ADR by downloading the launcher script and placing it in your system path:
+Instale o ADR descarregando o script de arranque e colocando-o no PATH do sistema:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/skillmio/adr/main/adr.sh -o /tmp/adr && \
@@ -82,9 +82,9 @@ chmod +x /tmp/adr && \
 sudo mv /tmp/adr /usr/local/bin/adr
 ```
 
-Once installed, the `adr` command will be available system-wide.
+Após a instalação, o comando `adr` ficará disponível em todo o sistema.
 
-You can verify the installation with:
+Pode verificar a instalação com:
 
 ```bash
 adr -h
@@ -92,20 +92,20 @@ adr -h
 >
 >
 > [!NOTE]
-> ADR roles are intended to be executed on a **fresh server install**.
-> Always take a system snapshot before deploying a role so you can roll back and retry without reinstalling the operating system from scratch.
+> Os roles do ADR destinam-se a ser executados num **servidor recém-instalado**.
+> Faça sempre um snapshot do sistema antes de implementar um role, para poder reverter e tentar novamente sem reinstalar o sistema operativo.
 
-## Usage
+## Utilização
 
-ADR allows you to deploy services using a single command.
+O ADR permite implementar serviços utilizando um único comando.
 
-### Deploy a role
+### Implementar um serviço
 
 ```bash
 adr wordpress
 ```
 
-Other examples:
+Outros exemplos:
 
 ```bash
 adr glpi
@@ -113,109 +113,109 @@ adr bookstack
 ```
 
 
-ADR automatically:
+O ADR faz automaticamente:
 
-* Detects your OS and version
-* Downloads the correct role config
-* Installs and configures the service
-* Applies sensible defaults
+* Deteta o sistema operativo e a respetiva versão
+* Descarrega a configuração correta do serviço
+* Instala e configura o serviço
+* Aplica definições sensatas por defeito
 
 
-### List available roles
+### Listar de serviços disponíveis
 
-To see all available roles for your system:
+Para ver todos os roles disponíveis para o seu sistema:
 
 ```bash
 adr -l
 ```
-or
+ou
 ```bash
 adr --list
 ```
 
-### Find a role (fuzzy search)
+### Procurar um role (pesquisa flexível)
 
-ADR includes **fuzzy role search**, so you don’t need to know the exact role name.
+O ADR inclui **fpesquisa flexível (fuzzy search)**, pelo que não é necessário saber o nome exato do role.
 
 ```bash
 adr --find word
 adr -f stack
 adr -f wp
 ```
-Fuzzy search matches partial and abbreviated input, making role discovery faster and more user-friendly.
 
-### Self-Updating
+A pesquisa flexível corresponde a entradas parciais ou abreviadas, tornando a descoberta de roles mais rápida e intuitiva.
 
-ADR automatically checks for updates each time it runs.
+### Atualização automática
 
-If a newer version is available, ADR will:
+O ADR verifica automaticamente se existem atualizações sempre que é executado.
 
-* Download the latest script
-* Replace the local binary
-* Continue using the updated version automatically
+Se estiver disponível uma nova versão, o ADR irá:
 
-No manual update steps are required.
+* Descarregar o script mais recente
+* Substituir o binário local
+* Continuar a execução utilizando a versão atualizada
+
+Não são necessários passos manuais de atualização.
 
 ### Diagnostics
 
-ADR includes built-in diagnostics to help troubleshoot issues.
+O ADR inclui diagnósticos integrados para ajudar na resolução de problemas.
 
 ```bash
 adr -d
 ```
+Este comando verifica:
 
-This command checks:
+* Instalação do ADR
+* Ficheiros de configuração
+* Ficheiros de idioma
+* Conectividade de rede
+* Disponibilidade da API de roles
 
-* ADR installation
-* Configuration files
-* Language files
-* Network connectivity
-* Role API availability
-
-To automatically fix detected issues:
+Para corrigir automaticamente os problemas detetados:
 
 ```bash
 adr -r
 ```
-or 
+ou 
 ```bash
 adr --repair
 ```
-This will re-download ADR and language files (internet access required).
+Este comando volta a descarregar o ADR e os ficheiros de idioma (é necessária ligação à Internet).
 
-### Language support
+### Suporte de idiomas
 
-ADR supports multiple languages and remembers your preference.
+O ADR suporta vários idiomas e memoriza a sua preferência.
 
-Set the language permanently:
+Definir o idioma permanentemente:
 
 ```bash
 adr -lg pt
 ```
 
-Available languages include:
+Idiomas disponíveis:
 
-* `en` — English
-* `pt` — Portuguese
-* `fr` — French
+* `en` — Inglês
+* `pt` — Português
+* `fr` — Francês
 
 
-### Help
+### Ajuda
 
-To display usage information:
+Para mostrar a informação de utilização:
 
 ```bash
 adr -h
 ```
-or
+ou
 ```bash
 adr --help
 ```
 >[!NOTE]
->ADR is designed for **AlmaLinux and RHEL-compatible distributions**
+>O ADR foi concebido para**AlmaLinux e distribuições compatíveis com RHEL**
 >
->Root privileges are required to install and configure services
+>São necessários privilégios de root para instalar e configurar serviços
 >
->Roles config are selected automatically based on your OS version
+>As configurações dos roles são selecionadas automaticamente com base na versão do sistema operativo
 >
->ADR is intended for a fresh server install
+>O ADR destina-se a uma instalação de servidor recente
