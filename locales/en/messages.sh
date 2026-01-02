@@ -60,4 +60,6 @@ MSG_DB_NAME=" Database name: "
 MSG_DB_USER=" DB User: "
 MSG_DB_PASS=" DB Pass: "
 MSG_DB_ROOT=" MySQL root password: "
+MSG_USER_LOGIN=" User: "
+MSG_USER_PASS=" Pass: "
 
