@@ -3,7 +3,7 @@
 
 
 ### Status Legend
-- 🟢 **Supported**
+- 🟢 **Available**
 - 🟡 **Planned**
 - 🔴 **Not Supported**
 
