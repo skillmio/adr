@@ -4,7 +4,7 @@
 # ADR — Auto-Deploy Role
 # ==========================
 
-CURRENT_VERSION="0.2.3"
+CURRENT_VERSION="0.2.4"
 
 REPO_OWNER="skillmio"
 REPO_NAME="adr"
@@ -14,7 +14,7 @@ RAW_BASE_URL="https://raw.githubusercontent.com/$REPO_OWNER/$REPO_NAME/$BRANCH"
 API_BASE_URL="https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents/roles"
 
 CONFIG_DIR="$HOME/.config/adr"
-CONFIG_FILE="$CONFIG_DIR/config"
+CONFIG_FILE="$CONFIG_DIR/config
 LOCALES_DIR="$CONFIG_DIR/locales"
 
 DEFAULT_LANG="en"
@@ -118,10 +118,28 @@ show_help() {
 }
 
 list_roles() {
-  roles=$(curl -fsSL "$API_BASE_URL" | grep '"name":' | grep '.sh' | cut -d '"' -f4)
-  for r in $roles; do
-    [[ "$r" == *_${DISTRO_SUFFIX}.sh ]] && echo " - ${r%_${DISTRO_SUFFIX}.sh}"
+  roles=()
+
+  while read -r r; do
+    [[ "$r" == *_${DISTRO_SUFFIX}.sh ]] || continue
+    roles+=( "${r%_${DISTRO_SUFFIX}.sh}" )
+  done < <(
+    curl -fsSL "$API_BASE_URL" \
+      | grep '"name":' \
+      | grep '.sh' \
+      | cut -d '"' -f4
+  )
+
+  cols=3
+  count=0
+
+  for role in "${roles[@]}"; do
+    printf "%-20s" "$role"
+    ((count++))
+    (( count % cols == 0 )) && echo
   done
+
+  (( count % cols != 0 )) && echo
 }
 
 find_role() {
