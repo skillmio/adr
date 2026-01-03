@@ -110,6 +110,7 @@ fuzzy_match() {
 # COMMANDS
 # ==========================
 
+# --- Show Help ---
 show_help() {
   msg VERSION_HEADER
   msg USAGE
@@ -117,8 +118,11 @@ show_help() {
   msg EXAMPLES
 }
 
+# --- List Roles ---
 list_roles() {
-  roles=()
+  local roles=()
+  local cols=3
+  local count=0
 
   while read -r r; do
     [[ "$r" == *_${DISTRO_SUFFIX}.sh ]] || continue
@@ -130,9 +134,6 @@ list_roles() {
       | cut -d '"' -f4
   )
 
-  cols=3
-  count=0
-
   for role in "${roles[@]}"; do
     printf "%-20s" "$role"
     ((count++))
@@ -143,6 +144,7 @@ list_roles() {
 }
 
 
+# --- Find Roles ---
 find_role() {
   query="$1"
   roles=$(curl -fsSL "$API_BASE_URL" | grep '"name":' | grep '.sh' | cut -d '"' -f4)
