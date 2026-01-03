@@ -14,7 +14,7 @@ RAW_BASE_URL="https://raw.githubusercontent.com/$REPO_OWNER/$REPO_NAME/$BRANCH"
 API_BASE_URL="https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents/roles"
 
 CONFIG_DIR="$HOME/.config/adr"
-CONFIG_FILE="$CONFIG_DIR/config
+CONFIG_FILE="$CONFIG_DIR/config"
 LOCALES_DIR="$CONFIG_DIR/locales"
 
 DEFAULT_LANG="en"
