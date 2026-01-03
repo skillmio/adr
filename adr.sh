@@ -142,6 +142,7 @@ list_roles() {
   (( count % cols != 0 )) && echo
 }
 
+
 find_role() {
   query="$1"
   roles=$(curl -fsSL "$API_BASE_URL" | grep '"name":' | grep '.sh' | cut -d '"' -f4)
