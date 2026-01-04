@@ -37,13 +37,11 @@ else
 fi
 
 # === GLOBAL VARIABLES ===
-TMP_DIR="/tmp"
 PORT=1005
-INSTALL_DIR="/var/www/html"
 DB_NAME="zabbix"
 DB_USER="zabbix"
 DB_PASS="$(tr -dc 'A-Za-z0-9#.$' </dev/urandom | head -c 24)"
-MYSQL_ROOT_PASS="$(tr -dc 'A-Za-z0-9#.$' </dev/urandom | head -c 24)"
+
 
 # === EXECUTION FLOW ===
 
