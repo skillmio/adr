@@ -145,8 +145,8 @@ info_msg "[4/5] ${MSG_INSTALL_SOLUTION}"
  sudo sed -i "s|^# DBPassword=.*|DBPassword=${DB_PASS}|" /etc/zabbix/zabbix_server.conf
  
  # Enable services
- sudo systemctl start zabbix-server zabbix-agent2 nginx php-fpm
- sudo systemctl enable zabbix-server zabbix-agent2 nginx php-fpm
+ sudo systemctl start zabbix-server zabbix-agent nginx php-fpm
+ sudo systemctl enable zabbix-server zabbix-agent nginx php-fpm
 
 } >>"$LOGPATH" 2>&1
 
