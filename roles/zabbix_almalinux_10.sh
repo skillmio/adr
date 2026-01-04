@@ -157,7 +157,7 @@ fi
 
 
 # --- EXTRA GRAB INSTALLED VERSION ---
-XVERSION=$(rpm -q zabbix-server --qf '%{VERSION}-%{RELEASE}\n')
+XVERSION=$(rpm -q zabbix-release --qf '%{VERSION}-%{RELEASE}\n')
 
 
 # === SAVE THIS INFO ===
