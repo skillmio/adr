@@ -38,6 +38,7 @@ fi
 
 # === GLOBAL VARIABLES ===
 TMP_DIR="/tmp"
+PORT=1005
 INSTALL_DIR="/var/www/html"
 DB_NAME="zabbix"
 DB_USER="zabbix"
@@ -62,8 +63,8 @@ info_msg "${MSG_USING_IP}: $SERVER_IP"
 info_msg "${MSG_USING_URL}: $ACCESS_URL"
 
 echo " --- "
-# --- [1/] INSTALLING PREREQUISITES ---
-info_msg "[1/] ${MSG_INSTALL_PREREQUISITES}"
+# --- [1/5] INSTALLING PREREQUISITES ---
+info_msg "[1/5] ${MSG_INSTALL_PREREQUISITES}"
 {
 sudo dnf install -y epel-release
 sudo dnf install -y wget curl tar 
@@ -73,8 +74,8 @@ sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-10
 
 
 
-# --- [2/] INSTALLING POSTGRESQL ---
-info_msg "[2/] ${MSG_INSTALL_POSTGSQL}"
+# --- [2/5] INSTALLING POSTGRESQL ---
+info_msg "[2/5] ${MSG_INSTALL_POSTGSQL}"
 {
 # Install PostgreSQL:
 sudo dnf install -y postgresql18-server
@@ -88,9 +89,96 @@ sudo systemctl start postgresql-18
 
 
 
-# --- [3/] INSTALLING ZABBIX ---
-info_msg "[3/] ${MSG_INSTALL_SOLUTION}"
+
+# --- [3/5] INSTALLING NGINX ---
+info_msg "[3/5] ${MSG_INSTALL_NGINX}"
 {
-  sudo dnf install -y httpd
-  sudo systemctl enable --now httpd
+ tee /etc/nginx/conf.d/zabbix.conf > /dev/null <<EOF
+server {
+    listen 80;
+    server_name ${SERVER_IP} ${ACCESS_URL};
+
+    access_log /var/log/nginx/zabbix_access.log;
+    error_log /var/log/nginx/zabbix_error.log;
+
+    location / {
+        proxy_pass http://localhost:${PORT};
+        proxy_http_version 1.1;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
+EOF
+  setsebool -P httpd_can_network_connect 1
+  nginx -t
+  systemctl enable --now nginx
+
 } >>"$LOGPATH" 2>&1
+
+
+
+# --- [4/5] INSTALLING ZABBIX ---
+info_msg "[4/5] ${MSG_INSTALL_SOLUTION}"
+{
+
+ # Disable Zabbix packages provided by EPEL
+ sudo sed -i '/^\[epel\]/,/^\[/ s/^excludepkgs=.*/excludepkgs=zabbix*/' /etc/yum.repos.d/epel.repo || \
+  echo -e "\n[epel]\nexcludepkgs=zabbix*" | sudo tee -a /etc/yum.repos.d/epel.repo
+  
+ # Add repo
+ rpm -Uvh https://repo.zabbix.com/zabbix/7.4/release/alma/10/noarch/zabbix-release-latest-7.4.el10.noarch.rpm
+ dnf clean all 
+ 
+ # Install Zabbix server, frontend, agent 
+ dnf install zabbix-server-pgsql zabbix-web-pgsql zabbix-nginx-conf zabbix-sql-scripts zabbix-selinux-policy zabbix-agent 
+ 
+ # Create initial database
+ sudo -u postgres psql -c "CREATE USER ${DB_USER} WITH ENCRYPTED PASSWORD '${DB_PASS}';"
+ sudo -u postgres createdb -O ${DB_USER} ${DB_NAME}
+ zcat /usr/share/zabbix/sql-scripts/postgresql/server.sql.gz | sudo -u ${DB_USER} psql ${DB_NAME}
+ 
+ # Testing connectivity
+ PGPASSWORD="${DB_PASS}" psql -U "${DB_USER}" -d "${DB_NAME}" -h localhost -c "\\conninfo"
+
+ # Edit zabbix config file
+ sudo sed -i "s|^# DBPassword=.*|DBPassword=${DB_PASS}|" /etc/zabbix/zabbix_server.conf
+ 
+ # Enable services
+ sudo systemctl start zabbix-server zabbix-agent2 nginx php-fpm
+ sudo systemctl enable zabbix-server zabbix-agent2 nginx php-fpm
+
+} >>"$LOGPATH" 2>&1
+
+
+# --- [5/5] ADJUSTING FIREWALL ---
+info_msg "[5/5] ${MSG_FIREWALL}"
+{
+if systemctl is-active --quiet firewalld; then 
+  sudo firewall-cmd --permanent --add-service=http
+  sudo firewall-cmd --permanent --add-service=https
+  sudo firewall-cmd --permanent --add-port=${PORT}/tcp
+  sudo firewall-cmd --reload
+fi
+} >>"$LOGPATH" 2>&1
+
+
+
+# --- EXTRA GRAB INSTALLED VERSION ---
+XVERSION=$(rpm -q zabbix-server --qf '%{VERSION}-%{RELEASE}\n')
+
+
+# === SAVE THIS INFO ===
+echo ""
+info_msg "=================================================================="
+info_msg " ${MSG_INSTALL_COMPLETE}"
+info_msg "------------------------------------------------------------------"
+info_msg " ${MSG_INSTALLED_VER}${SOLUTION}=${XVERSION}"
+info_msg " ${MSG_URL}${ACCESS_URL}"
+info_msg " ${MSG_IP}${SERVER_IP}"
+info_msg " ${MSG_DB_NAME}${DB_NAME}"
+info_msg " ${MSG_DB_USER}${DB_USER}"
+info_msg " ${MSG_DB_PASS}${DB_PASS}"
+info_msg " ${MSG_LOGPATH}"
+info_msg "=================================================================="
