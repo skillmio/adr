@@ -28,7 +28,7 @@
 | Wazuh            | XDR & SIEM Server                   | 🟡    |
 | Graylog          | Log Management Server               | 🟡    |
 | Beszel           | Monitoring Server                   | 🟢    |
-| Zabbix           | Monitoring Server                   | 🟡    |
+| Zabbix           | Monitoring Server                   | 🟢    |
 | OpenCloud        | Collaboration & File Server         | 🟡    |
 | NextCloud HUB    | Collaboration Suite Server          | 🟡    |
 | Bookstack        | Documentation Server                | 🟡    |
