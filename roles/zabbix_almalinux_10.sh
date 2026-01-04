@@ -61,11 +61,11 @@ info_msg "${MSG_USING_IP}: $SERVER_IP"
 info_msg "${MSG_USING_URL}: $ACCESS_URL"
 
 echo " --- "
-# --- [1/5] INSTALLING PREREQUISITES ---
-info_msg "[1/5] ${MSG_INSTALL_PREREQUISITES}"
+# --- [1/4] INSTALLING PREREQUISITES ---
+info_msg "[1/4] ${MSG_INSTALL_PREREQUISITES}"
 {
 sudo dnf install -y epel-release
-sudo dnf install -y wget curl tar policycoreutils-python-utils
+sudo dnf install -y wget curl tar policycoreutils-python-utils nginx
 #pgsql repo
 sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-10-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 
@@ -77,8 +77,8 @@ sudo localectl set-locale LANG=en_US.UTF-8
 
 
 
-# --- [2/5] INSTALLING POSTGRESQL ---
-info_msg "[2/5] ${MSG_INSTALL_POSTGSQL}"
+# --- [2/4] INSTALLING POSTGRESQL ---
+info_msg "[2/4] ${MSG_INSTALL_POSTGSQL}"
 {
 # Install PostgreSQL:
 sudo dnf install -y postgresql18-server
@@ -92,26 +92,8 @@ sudo systemctl start postgresql-18
 
 
 
-
-# --- [3/5] INSTALLING NGINX ---
-info_msg "[3/5] ${MSG_INSTALL_NGINX}"
-{
- dnf install -y nginx
-# change listen and server
- sed -i \
-  -e 's|^[[:space:]]*listen[[:space:]]\+8080;|    listen 80;|' \
-  -e 's|^[[:space:]]*server_name[[:space:]]\+[^;]\+;|    server_name ${SERVER_IP} ${ACCESS_URL};|' \
-  /etc/nginx/conf.d/zabbix.conf
-  setsebool -P httpd_can_network_connect 1
-  nginx -t
-  systemctl enable --now nginx
-
-} >>"$LOGPATH" 2>&1
-
-
-
-# --- [4/5] INSTALLING ZABBIX ---
-info_msg "[4/5] ${MSG_INSTALL_SOLUTION}"
+# --- [3/4] INSTALLING ZABBIX ---
+info_msg "[3/4] ${MSG_INSTALL_SOLUTION}"
 {
 
  # Disable Zabbix packages provided by EPEL
@@ -145,7 +127,15 @@ info_msg "[4/5] ${MSG_INSTALL_SOLUTION}"
  restorecon -Rv /var/log/zabbix
  semanage fcontext -a -t zabbix_var_run_t "/run/zabbix(/.*)?"
  restorecon -Rv /run/zabbix
- 
+
+ #Nginx - change listen and server
+ sed -i \
+  -e 's|^[[:space:]]*listen[[:space:]]\+8080;|    listen 80;|' \
+  -e 's|^[[:space:]]*server_name[[:space:]]\+[^;]\+;|    server_name ${SERVER_IP} ${ACCESS_URL};|' \
+  /etc/nginx/conf.d/zabbix.conf
+  setsebool -P httpd_can_network_connect 1
+  nginx -t
+   
  # Enable services
  sudo systemctl start zabbix-server zabbix-agent2 nginx php-fpm
  sudo systemctl enable zabbix-server zabbix-agent2 nginx php-fpm
@@ -153,8 +143,8 @@ info_msg "[4/5] ${MSG_INSTALL_SOLUTION}"
 } >>"$LOGPATH" 2>&1
 
 
-# --- [5/5] ADJUSTING FIREWALL ---
-info_msg "[5/5] ${MSG_FIREWALL}"
+# --- [4/4] ADJUSTING FIREWALL ---
+info_msg "[4/4] ${MSG_FIREWALL}"
 {
 if systemctl is-active --quiet firewalld; then 
   sudo firewall-cmd --permanent --add-service=http
