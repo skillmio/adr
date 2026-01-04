@@ -97,7 +97,7 @@ sudo systemctl start postgresql-18
 info_msg "[3/5] ${MSG_INSTALL_NGINX}"
 {
  dnf install -y nginx
- tee /etc/nginx/conf.d/zabbix.conf > /dev/null <<EOF
+# change listen and server
  sed -i \
   -e 's|^[[:space:]]*listen[[:space:]]\+8080;|    listen 80;|' \
   -e 's|^[[:space:]]*server_name[[:space:]]\+[^;]\+;|    server_name ${SERVER_IP} ${ACCESS_URL};|' \
