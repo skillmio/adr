@@ -137,8 +137,8 @@ info_msg "[3/4] ${MSG_INSTALL_SOLUTION}"
   nginx -t
    
  # Enable services
- sudo systemctl start zabbix-server zabbix-agent2 nginx php-fpm
- sudo systemctl enable zabbix-server zabbix-agent2 nginx php-fpm
+ sudo systemctl restart zabbix-server zabbix-agent nginx php-fpm
+ sudo systemctl enable zabbix-server zabbix-agent nginx php-fpm 
 
 } >>"$LOGPATH" 2>&1
 
