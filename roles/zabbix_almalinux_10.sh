@@ -91,6 +91,7 @@ sudo systemctl start postgresql-18
 # --- [3/5] INSTALLING NGINX ---
 info_msg "[3/5] ${MSG_INSTALL_NGINX}"
 {
+ dnf install -y nginx
  tee /etc/nginx/conf.d/zabbix.conf > /dev/null <<EOF
 server {
     listen 80;
