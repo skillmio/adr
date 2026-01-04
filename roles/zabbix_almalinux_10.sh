@@ -105,7 +105,7 @@ info_msg "[3/4] ${MSG_INSTALL_SOLUTION}"
  dnf clean all 
  
  # Install Zabbix server, frontend, agent 
- dnf install zabbix-server-pgsql zabbix-web-pgsql zabbix-nginx-conf zabbix-sql-scripts zabbix-selinux-policy zabbix-agent 
+ dnf install -y zabbix-server-pgsql zabbix-web-pgsql zabbix-nginx-conf zabbix-sql-scripts zabbix-selinux-policy zabbix-agent 
  
  # Create initial database
  sudo -u postgres psql -c "CREATE USER ${DB_USER} WITH ENCRYPTED PASSWORD '${DB_PASS}';"
