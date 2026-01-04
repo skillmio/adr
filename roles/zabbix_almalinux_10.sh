@@ -74,7 +74,6 @@ sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-10
 
 
 # --- [2/] INSTALLING POSTGRESQL ---
-X="POSTGRESQL"
 info_msg "[2/] ${MSG_INSTALL_POSTGSQL}"
 {
 # Install PostgreSQL:
