@@ -65,9 +65,14 @@ echo " --- "
 info_msg "[1/5] ${MSG_INSTALL_PREREQUISITES}"
 {
 sudo dnf install -y epel-release
-sudo dnf install -y wget curl tar 
+sudo dnf install -y wget curl tar policycoreutils-python-utils
 #pgsql repo
 sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-10-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+
+#locale 
+sudo dnf install glibc-all-langpacks -y
+sudo localectl set-locale LANG=en_US.UTF-8
+
 } >>"$LOGPATH" 2>&1
 
 
@@ -93,23 +98,10 @@ info_msg "[3/5] ${MSG_INSTALL_NGINX}"
 {
  dnf install -y nginx
  tee /etc/nginx/conf.d/zabbix.conf > /dev/null <<EOF
-server {
-    listen 80;
-    server_name ${SERVER_IP} ${ACCESS_URL};
-
-    access_log /var/log/nginx/zabbix_access.log;
-    error_log /var/log/nginx/zabbix_error.log;
-
-    location / {
-        proxy_pass http://localhost:${PORT};
-        proxy_http_version 1.1;
-        proxy_set_header Host \$host;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection "upgrade";
-    }
-}
-EOF
+ sed -i \
+  -e 's|^[[:space:]]*listen[[:space:]]\+8080;|    listen 80;|' \
+  -e 's|^[[:space:]]*server_name[[:space:]]\+[^;]\+;|    server_name ${SERVER_IP} ${ACCESS_URL};|' \
+  /etc/nginx/conf.d/zabbix.conf
   setsebool -P httpd_can_network_connect 1
   nginx -t
   systemctl enable --now nginx
@@ -131,7 +123,7 @@ info_msg "[4/5] ${MSG_INSTALL_SOLUTION}"
  dnf clean all 
  
  # Install Zabbix server, frontend, agent 
- dnf install -y zabbix-server-pgsql zabbix-web-pgsql zabbix-nginx-conf zabbix-sql-scripts zabbix-selinux-policy zabbix-agent 
+ dnf install zabbix-server-pgsql zabbix-web-pgsql zabbix-nginx-conf zabbix-sql-scripts zabbix-selinux-policy zabbix-agent 
  
  # Create initial database
  sudo -u postgres psql -c "CREATE USER ${DB_USER} WITH ENCRYPTED PASSWORD '${DB_PASS}';"
@@ -144,9 +136,19 @@ info_msg "[4/5] ${MSG_INSTALL_SOLUTION}"
  # Edit zabbix config file
  sudo sed -i "s|^# DBPassword=.*|DBPassword=${DB_PASS}|" /etc/zabbix/zabbix_server.conf
  
+ # Permissions
+ chown -R zabbix:zabbix /var/log/zabbix
+ chown -R zabbix:zabbix /run/zabbix
+ 
+ #Selinux
+ semanage fcontext -a -t zabbix_log_t "/var/log/zabbix(/.*)?"
+ restorecon -Rv /var/log/zabbix
+ semanage fcontext -a -t zabbix_var_run_t "/run/zabbix(/.*)?"
+ restorecon -Rv /run/zabbix
+ 
  # Enable services
- sudo systemctl start zabbix-server zabbix-agent nginx php-fpm
- sudo systemctl enable zabbix-server zabbix-agent nginx php-fpm
+ sudo systemctl start zabbix-server zabbix-agent2 nginx php-fpm
+ sudo systemctl enable zabbix-server zabbix-agent2 nginx php-fpm
 
 } >>"$LOGPATH" 2>&1
 
