@@ -41,7 +41,7 @@ PORT=1005
 DB_NAME="zabbix"
 DB_USER="zabbix"
 DB_PASS="$(tr -dc 'A-Za-z0-9#.$' </dev/urandom | head -c 24)"
-MSG_USER_LOGIN="Admin"
+
 
 
 # === EXECUTION FLOW ===
