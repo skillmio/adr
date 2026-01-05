@@ -41,6 +41,7 @@ PORT=1005
 DB_NAME="zabbix"
 DB_USER="zabbix"
 DB_PASS="$(tr -dc 'A-Za-z0-9#.$' </dev/urandom | head -c 24)"
+MSG_USER_LOGIN="Admin"
 
 
 # === EXECUTION FLOW ===
@@ -171,5 +172,7 @@ info_msg " ${MSG_IP}${SERVER_IP}"
 info_msg " ${MSG_DB_NAME}${DB_NAME}"
 info_msg " ${MSG_DB_USER}${DB_USER}"
 info_msg " ${MSG_DB_PASS}${DB_PASS}"
+info_msg " ${MSG_USER_LOGIN} Admin"
+info_msg " ${MSG_USER_PASS} zabbix"
 info_msg " ${MSG_LOGPATH}"
 info_msg "=================================================================="
