@@ -39,6 +39,7 @@ fi
 info_msg "${MSG_START}"
 info_msg "${MSG_LOGPATH}"
 
+echo " --- "
 # --- [1/4] INSTALLING PREREQUISITES ---
 info_msg "[1/1] ${MSG_INSTALL_PREREQUISITES}"
 
@@ -54,7 +55,6 @@ sudo dnf install -y \
   ncurses-term \
   htop \
   net-tools \
-  telnet \
   traceroute \
   iputils \
   curl \
@@ -82,3 +82,14 @@ sudo dnf install -y \
 # Update
 sudo dnf update -y && sudo dnf upgrade -y
 
+# Firewall
+sudo systemctl enable --now firewalld
+sudo firewall-cmd --permanent --add-service=ssh
+sudo firewall-cmd --reload
+
+# SSH
+echo "PermitRootLogin yes" | sudo tee /etc/ssh/sshd_config.d/permit_root.conf
+systemctl enable --now sshd
+
+# Reboot LXC
+Reboot now
