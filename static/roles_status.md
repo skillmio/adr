@@ -17,8 +17,9 @@
 
 ## Roles
 
-| Roles            | Description                         | AL 10 |
-|------------------|-------------------------------------|-------|
+| Roles            | Description                                                    | AL 10 |
+|------------------|----------------------------------------------------------------|-------|
+| Prep-LXC         | Packages needed to provision adr roles without failing         | 🟢    |
 | FreeIPA          | Identity Management Server          | 🟡    |
 | MariaDB          | Database Server                     | 🟢    |
 | PostgreSQL       | Database Server                     | 🟢    |
