@@ -77,6 +77,7 @@ sudo dnf install -y \
   mtr \
   firewalld \
   openssh-server \
+  selinux-policy selinux-policy-targeted policycoreutils \
   nc
 
 # Update
