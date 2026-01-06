@@ -6,6 +6,13 @@
 
 # === PREPARATIONS ===
 
+# --- LOGGING ---
+LOGPATH="/tmp/${SOLUTION}_install_$(date +%s).log"
+
+function info_msg() {
+  echo "$1" | tee -a "$LOGPATH"
+}
+
 # --- LANGUAGE ---
 CONFIG_FILE="$HOME/.config/adr/config"
 LOCALES_DIR="$HOME/.config/adr/locales"
@@ -26,7 +33,7 @@ fi
 # === EXECUTION FLOW ===
 
 # --- Hello Msg ---
-info_msg "${MSG_START}"
+info_msg "${MSG_START_LXC}"
 info_msg "${MSG_LOGPATH}"
 
 # --- [1/4] INSTALLING PREREQUISITES ---
