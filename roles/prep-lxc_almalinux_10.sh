@@ -93,4 +93,4 @@ echo "PermitRootLogin yes" | sudo tee /etc/ssh/sshd_config.d/permit_root.conf
 systemctl enable --now sshd
 
 # Reboot LXC
-Reboot now
+reboot now
