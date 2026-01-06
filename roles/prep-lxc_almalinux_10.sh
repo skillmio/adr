@@ -6,6 +6,9 @@
 
 # === PREPARATIONS ===
 
+# Define Solution early (needed for LOGPATH)
+SOLUTION="LXC (Linux Container)"
+
 # --- LOGGING ---
 LOGPATH="/tmp/${SOLUTION}_install_$(date +%s).log"
 
@@ -33,7 +36,7 @@ fi
 # === EXECUTION FLOW ===
 
 # --- Hello Msg ---
-info_msg "${MSG_START_LXC}"
+info_msg "${MSG_START}"
 info_msg "${MSG_LOGPATH}"
 
 # --- [1/4] INSTALLING PREREQUISITES ---
