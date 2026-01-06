@@ -7,7 +7,7 @@
 # === PREPARATIONS ===
 
 # Define Solution early (needed for LOGPATH)
-SOLUTION="LXC (Linux Container)"
+SOLUTION="LXC"
 
 # --- LOGGING ---
 LOGPATH="/tmp/${SOLUTION}_install_$(date +%s).log"
