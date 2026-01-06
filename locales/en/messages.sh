@@ -36,6 +36,7 @@ REPAIR_START() { echo "Repairing ADR (internet required)..."; }
 
 # === ROLE MSGs === 
 MSG_START="=== Starting $SOLUTION installation ==="
+MSG_START_LXC="=== Starting LXC Provisioning ==="
 MSG_LOGPATH="Sensitive log file (delete after use): $LOGPATH"
 MSG_PROMPT_IP="Enter the IP address that will be used to access $SOLUTION"
 MSG_PROMPT_URL="Enter the URL or Hostname that will be used to access $SOLUTION"
