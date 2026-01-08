@@ -19,8 +19,8 @@
 
 | Roles            | Enterprise Needs                                                              | AL 10 |
 |------------------|-------------------------------------------------------------------------------|-------|
-| Prep-LXC         | Provisioning Proxmox Almalinux LXC for use with ADR                           | 🟢    |
-| FreeIPA          | Identity Management Server                                                    | 🟡    |
+| Prep-LXC         | Proxmox AlmaLinux LXC provisioning for ADR                                    | 🟢    |
+| FreeIPA          | Centralised identity management                                               | 🟡    |
 | MariaDB          | Database Server                                                               | 🟢    |
 | PostgreSQL       | Database Server                                                               | 🟢    |
 | GLPI             | ITSM Server                                                                   | 🟡    |
