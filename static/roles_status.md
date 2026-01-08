@@ -17,7 +17,7 @@
 
 ## Roles
 
-| Roles            | Description                                                                   | AL 10 |
+| Roles            | Enterprise Needs                                                              | AL 10 |
 |------------------|-------------------------------------------------------------------------------|-------|
 | Prep-LXC         | Packages needed on Proxmox LXC to provision adr roles without failing         | 🟢    |
 | FreeIPA          | Identity Management Server                                                    | 🟡    |
