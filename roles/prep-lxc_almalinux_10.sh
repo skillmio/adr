@@ -51,8 +51,8 @@ echo " --- "
 info_msg "[1/1] ${MSG_INSTALL_PREREQUISITES}"
 
 # Repo
-/usr/bin/crb enable
 dnf install -y epel-release
+/usr/bin/crb enable
 
 # Packages
 dnf install -y \
