@@ -35,6 +35,13 @@ fi
 
 # === EXECUTION FLOW ===
 
+# --- Check for root ---
+if [[ "$EUID" -ne 0 ]]; then
+  #echo "This script must be run as root"
+  echo "${MSG_B_ROOT}"
+  exit 1
+fi
+
 # --- Hello Msg ---
 info_msg "${MSG_START}"
 info_msg "${MSG_LOGPATH}"
@@ -44,11 +51,11 @@ echo " --- "
 info_msg "[1/1] ${MSG_INSTALL_PREREQUISITES}"
 
 # Repo
-sudo /usr/bin/crb enable
-sudo dnf install -y epel-release
+/usr/bin/crb enable
+dnf install -y epel-release
 
 # Packages
-sudo dnf install -y \
+dnf install -y \
   wget \
   tcpdump \
   bind-utils \
@@ -81,22 +88,22 @@ sudo dnf install -y \
   nc
 
 # SELinux 
-sudo sed -i \
+sed -i \
   -e 's/^SELINUX=.*/SELINUX=enforcing/' \
   -e 's/^SELINUXTYPE=.*/SELINUXTYPE=targeted/' \
   /etc/selinux/config
-sudo touch /.autorelabel
+touch /.autorelabel
 
 # Update
-sudo dnf update -y && sudo dnf upgrade -y
+dnf update -y && dnf upgrade -y
 
 # Firewall
-sudo systemctl enable --now firewalld
-sudo firewall-cmd --permanent --add-service=ssh
-sudo firewall-cmd --reload
+systemctl enable --now firewalld
+firewall-cmd --permanent --add-service=ssh
+firewall-cmd --reload
 
 # SSH
-echo "PermitRootLogin yes" | sudo tee /etc/ssh/sshd_config.d/permit_root.conf
+echo "PermitRootLogin yes" | tee /etc/ssh/sshd_config.d/permit_root.conf
 systemctl enable --now sshd
 
 # Reboot LXC
