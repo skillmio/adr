@@ -35,6 +35,7 @@ REPAIR_START() { echo "Repairing ADR (internet required)..."; }
 
 
 # === ROLE MSGs === 
+MSG_B_ROOT="This script must be run as root"
 MSG_START="=== Starting $SOLUTION Provisioning ==="
 MSG_LOGPATH="Sensitive log file (delete after use): $LOGPATH"
 MSG_PROMPT_IP="Enter the IP address that will be used to access $SOLUTION"
@@ -42,6 +43,8 @@ MSG_PROMPT_URL="Enter the URL or Hostname that will be used to access $SOLUTION"
 MSG_USING_IP="IP has been set to"
 MSG_USING_URL="URL has been set to"
 MSG_INSTALL_PREREQUISITES="Installing Required Packages"
+MSG_VERSION_DETECTED="Version found"
+MSG_ERR_VERSION="Version not found"
 MSG_INSTALL_MARIADB="Installing and Configuring MariaDB"
 MSG_INSTALL_POSTGSQL="Installing and Configuring PostgreSQL"
 MSG_INSTALL_APACHE="Installing and Configuring Apache"
