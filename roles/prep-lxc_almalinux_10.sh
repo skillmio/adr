@@ -80,6 +80,13 @@ sudo dnf install -y \
   selinux-policy selinux-policy-targeted policycoreutils \
   nc
 
+# SELinux 
+sudo sed -i \
+  -e 's/^SELINUX=.*/SELINUX=enforcing/' \
+  -e 's/^SELINUXTYPE=.*/SELINUXTYPE=targeted/' \
+  /etc/selinux/config
+sudo touch /.autorelabel
+
 # Update
 sudo dnf update -y && sudo dnf upgrade -y
 
