@@ -192,16 +192,19 @@ EOF
   sudo sed -i 's/^session.cookie_httponly =.*/session.cookie_httponly = 1/' /etc/php.ini
   sudo systemctl restart php-fpm
   
-  # SElinux
-  if command -v getenforce >/dev/null 2>&1 && [ "$(getenforce)" != "Disabled" ]; then
-    sudo restorecon -Rv "$INSTALL_DIR"
-    sudo setsebool -P httpd_can_sendmail 1
-    sudo setsebool -P httpd_can_network_connect 1
-    sudo setsebool -P httpd_can_network_connect_db 1
-    sudo setsebool -P httpd_mod_auth_ntlm_winbind 1
-    sudo setsebool -P allow_httpd_mod_auth_ntlm_winbind 1
-  else
-   # do nothing
+  # SELinux
+  if command -v getenforce >/dev/null 2>&1; then
+    selinux_mode="$(getenforce)"
+  
+    if [[ "$selinux_mode" != "Disabled" ]]; then
+      restorecon -Rv "$INSTALL_DIR"
+  
+      setsebool -P httpd_can_sendmail on
+      setsebool -P httpd_can_network_connect on
+      setsebool -P httpd_can_network_connect_db on
+      setsebool -P httpd_mod_auth_ntlm_winbind on
+      setsebool -P allow_httpd_mod_auth_ntlm_winbind on
+    fi
   fi
   
   # Apache restart 
