@@ -7,12 +7,10 @@
 
 </div>
 
-### Status Legend
-- 🟢 **Available**
-- 🟡 **Planned**
-- 🔴 **Not Supported**
 
 
+
+# COEFIT
 By joining **Base** solutions and **Roles** you can build a **Cost effective IT infrastructure (COEFIT)** that solves your enterprise needs.
 
 ## Base 
@@ -29,6 +27,10 @@ By joining **Base** solutions and **Roles** you can build a **Cost effective IT 
 > [!NOTE]
 > AL stands for AlmaLinux
 
+### Status Legend
+<sup> 🟢 **Available** </sup>
+<sup> 🟡 **Planned** </sup>
+<sup> 🔴 **Not Supported** </sup>
 
 | Roles            | Enterprise Needs                                                              | AL 10 |
 |------------------|-------------------------------------------------------------------------------|-------|
