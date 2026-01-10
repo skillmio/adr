@@ -13,14 +13,10 @@ clear
 SOLUTION="nextcloud"
 LOGPATH="/tmp/${SOLUTION}_install_$(date +%s).log"
 
-info_msg() {
-  echo "$1" | tee -a "$LOG_FILE"
+function info_msg() {
+  echo "$1" | tee -a "$LOGPATH"
 }
 
-error_out() {
-  echo "ERROR: $1" | tee -a "$LOG_FILE" >&2
-  exit 1
-}
 
 ############################################
 # LANGUAGE
