@@ -5,13 +5,13 @@
 # ==========================================================================
 
 set -e
+clear
 
 ############################################
 # SOLUTION & LOGGING
 ############################################
 SOLUTION="nextcloud"
-TIMESTAMP="$(date +%s)"
-LOG_FILE="/tmp/${SOLUTION}_install_${TIMESTAMP}.log"
+LOGPATH="/tmp/${SOLUTION}_install_$(date +%s).log"
 
 info_msg() {
   echo "$1" | tee -a "$LOG_FILE"
@@ -23,33 +23,52 @@ error_out() {
 }
 
 ############################################
+# LANGUAGE
+############################################
+
+CONFIG_FILE="$HOME/.config/adr/config"
+LOCALES_DIR="$HOME/.config/adr/locales"
+
+if [[ -f "$CONFIG_FILE" ]]; then
+  source "$CONFIG_FILE"
+else
+  LANG_CODE="en"
+fi
+
+if [[ -f "$LOCALES_DIR/$LANG_CODE/messages.sh" ]]; then
+  source "$LOCALES_DIR/$LANG_CODE/messages.sh"
+else
+  info_msg "Locale $LANG_CODE not found, falling back to English."
+  source "$LOCALES_DIR/en/messages.sh"
+fi
+
+
+############################################
 # GLOBAL VARIABLES
 ############################################
 NC_DB_NAME="nextcloud"
 NC_DB_USER="nextcloud"
-DEFAULT_IP="$(hostname -I | awk '{print $1}')"
-SERVER_IP=""
-DOMAIN=""
-MYSQL_ROOT_PASS=""
-NC_DB_PASS=""
+MYSQL_ROOT_PASS="$(tr -dc 'A-Za-z0-9#.$' </dev/urandom | head -c 24)"
+NC_DB_PASS="$(tr -dc 'A-Za-z0-9#.$' </dev/urandom | head -c 24)"
+
 
 ############################################
 # START MESSAGE
 ############################################
-echo "=== Starting Nextcloud Provisioning ==="
-echo "Sensitive log file (delete after use): $LOG_FILE"
+info_msg "${MSG_START}"
+info_msg "${MSG_LOGPATH}"
 
 ############################################
 # PROMPT FOR IP / DOMAIN
 ############################################
-read -rp "Enter the IP or Domain for Nextcloud [${DEFAULT_IP}]: " SERVER_IP
-SERVER_IP="${SERVER_IP:-$DEFAULT_IP}"
+read -p "${MSG_PROMPT_IP} ($(hostname -I | awk '{print $1}')): " SERVER_IP
+SERVER_IP=${SERVER_IP:-$(hostname -I | awk '{print $1}')}
 
-read -rp "Enter the URL or Hostname to access Nextcloud [${SERVER_IP}]: " DOMAIN
-DOMAIN="${DOMAIN:-$SERVER_IP}"
+read -p "${MSG_PROMPT_URL} ($(hostname -f)): " ACCESS_URL
+ACCESS_URL=${ACCESS_URL:-$(hostname -f)}
 
-info_msg "IP has been set to: $SERVER_IP"
-info_msg "URL has been set to: $DOMAIN"
+info_msg "${MSG_USING_IP}: $SERVER_IP"
+info_msg "${MSG_USING_URL}: $ACCESS_URL"
 echo " --- "
 
 ############################################
@@ -69,34 +88,6 @@ systemctl enable --now httpd mariadb php-fpm
 ############################################
 info_msg "[2/4] Configuring MariaDB and Nextcloud Database"
 {
-# Prompt for MariaDB root password
-while true; do
-  read -s -rp "Enter MariaDB root password (leave blank to auto-generate): " MYSQL_ROOT_PASS
-  echo
-  read -s -rp "Re-enter root password: " MYSQL_ROOT_PASS_CONFIRM
-  echo
-  [[ "$MYSQL_ROOT_PASS" == "$MYSQL_ROOT_PASS_CONFIRM" ]] && break || echo "Passwords do not match. Try again."
-done
-
-if [[ -z "$MYSQL_ROOT_PASS" ]]; then
-  dnf install -y openssl
-  MYSQL_ROOT_PASS=$(openssl rand -base64 16)
-  echo "Generated MariaDB root password: $MYSQL_ROOT_PASS"
-fi
-
-# Prompt for Nextcloud DB password
-while true; do
-  read -s -rp "Enter Nextcloud DB user password (leave blank to auto-generate): " NC_DB_PASS
-  echo
-  read -s -rp "Re-enter password: " NC_DB_PASS_CONFIRM
-  echo
-  [[ "$NC_DB_PASS" == "$NC_DB_PASS_CONFIRM" ]] && break || echo "Passwords do not match. Try again."
-done
-
-if [[ -z "$NC_DB_PASS" ]]; then
-  NC_DB_PASS=$(openssl rand -base64 16)
-  echo "Generated Nextcloud DB password: $NC_DB_PASS"
-fi
 
 # Secure MariaDB and create DB
 mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASS}';"
@@ -229,8 +220,5 @@ info_msg " MariaDB root password: ${MYSQL_ROOT_PASS}"
 info_msg " Nextcloud DB user: ${NC_DB_USER}"
 info_msg " Nextcloud DB password: ${NC_DB_PASS}"
 info_msg " Database name: ${NC_DB_NAME}"
-info_msg " Apache conf: /etc/httpd/conf.d/nextcloud.conf"
-info_msg " PHP conf: /etc/php.ini"
-info_msg " OPCache conf: /etc/php.d/10-opcache.ini"
 info_msg " Sensitive log file (delete after use): $LOG_FILE"
 info_msg "=================================================================="
