@@ -11,7 +11,7 @@
 
 
 # COEFIT
-By joining **Base** solutions and **Roles** you can build a **Cost effective IT infrastructure (COEFIT)** that solves your enterprise needs.
+By joining **Base** solutions and **Roles** you can build a **[Cost effective IT infrastructure (COEFIT)](cost-effective-IT.md)** that solves your enterprise needs.
 
 ## Base 
 
