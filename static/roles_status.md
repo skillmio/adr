@@ -20,30 +20,30 @@
 | Roles            | Enterprise Needs                                                              | AL 10 |
 |------------------|-------------------------------------------------------------------------------|-------|
 | Prep-LXC         | Proxmox AlmaLinux LXC provisioning for ADR                                    | 🟢    |
-| FreeIPA          | Centralised identity management                                               | 🟡    |
+| Wordpress        | Web Server                                                                    | 🟢    |
 | MariaDB          | Database Server                                                               | 🟢    |
 | PostgreSQL       | Database Server                                                               | 🟢    |
 | GLPI             | ITSM Server                                                                   | 🟢    |
-| Ansible          | Automation Server                                                             | 🟡    |
-| Gitea            | Code Hosting                                                                  | 🟡    |
-| Wazuh            | XDR & SIEM Server                                                             | 🟡    |
-| Graylog          | Log Management Server                                                         | 🟡    |
 | Beszel           | Monitoring Server                                                             | 🟢    |
 | Zabbix           | Monitoring Server                                                             | 🟢    |
-| OpenCloud        | Collaboration & File Server                                                   | 🟡    |
-| NextCloud HUB    | Collaboration Suite Server                                                    | 🟡    |
 | Bookstack        | Documentation Server                                                          | 🟡    |
+| NextCloud HUB    | Collaboration Suite Server                                                    | 🟡    |
+| OpenCloud        | Collaboration & File Server                                                   | 🟡    |
+| Pi-hole          | DNS Filtering Server                                                          | 🟡    |
+| Wazuh            | XDR & SIEM Server                                                             | 🟡    |
+| Ansible          | Automation Server                                                             | 🟡    |
+| Gitea            | Code Hosting                                                                  | 🟡    |
+| Graylog          | Log Management Server                                                         | 🟡    |
 | docmost          | Documentation & Knowledge Server                                              | 🟡    |
 | Zimbra           | Mail & Collaboration Server                                                   | 🟡    |
-| Wordpress        | Web Server                                                                    | 🟢    |
 | Passbolt         | Password Management Server                                                    | 🟡    |
 | InvoiceNinja     | Invoicing & Billing Server                                                    | 🟡    |
 | MatterMost       | Team Messaging Server                                                         | 🟡    |
 | Paperless NGX    | Document Management Server                                                    | 🟡    |
+| FreeIPA          | Centralised identity management                                               | 🟡    |
 | Ollama + WebUI   | AI Inference & UI Server                                                      | 🟡    |
 | Plex             | Media Streaming Server                                                        | 🟡    |
 | JellyFin         | Media Streaming Server                                                        | 🟡    |
-| Pi-hole          | DNS Filtering Server                                                          | 🟡    |
 | Home Assistant   | Home Automation Server                                                        | 🟡    |
 | immich           | Photo Management Server                                                       | 🟡    |
 | MantisBT         | Bug & Issue Tracking Server                                                   | 🟡    |
