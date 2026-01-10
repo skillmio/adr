@@ -23,7 +23,7 @@
 | FreeIPA          | Centralised identity management                                               | 🟡    |
 | MariaDB          | Database Server                                                               | 🟢    |
 | PostgreSQL       | Database Server                                                               | 🟢    |
-| GLPI             | ITSM Server                                                                   | 🟡    |
+| GLPI             | ITSM Server                                                                   | 🟢    |
 | Ansible          | Automation Server                                                             | 🟡    |
 | Gitea            | Code Hosting                                                                  | 🟡    |
 | Wazuh            | XDR & SIEM Server                                                             | 🟡    |
