@@ -11,8 +11,8 @@ set -e
 ############################################
 SOLUTION="bookstack"
 ROLE_NAME="bookstack"
-TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
-LOGPATH="/var/log/adr_${ROLE_NAME}_${TIMESTAMP}.log"
+TIMESTAMP="$(date +%s)"
+LOGPATH="/tmp/${SOLUTION}_install_${TIMESTAMP}.log"
 
 info_msg() {
   echo "$1" | tee -a "$LOGPATH"
@@ -36,48 +36,40 @@ SERVER_IP=""
 DOMAIN=""
 
 ############################################
-# PRE-CHECKS
+# START MESSAGE
 ############################################
-info_msg "[1/11] Pre-installation checks"
-[ "$EUID" -eq 0 ] || error_out "This role must be run as root"
-
-if [ -d /etc/nginx/conf.d ] && [ "$(ls -A /etc/nginx/conf.d)" ]; then
-  error_out "Existing nginx configuration detected – fresh system required"
-fi
-
-if [ -d /var/lib/mysql ]; then
-  error_out "Existing MariaDB/MySQL data detected – aborting"
-fi
+echo "=== Starting BookStack Provisioning ==="
+echo "Sensitive log file (delete after use): $LOGPATH"
 
 ############################################
-# NETWORK INPUT
+# PROMPT FOR IP AND DOMAIN
 ############################################
-info_msg "[2/11] Network configuration"
-read -rp "Enter server IP [${DEFAULT_IP}]: " SERVER_IP
+read -rp "Enter the IP address that will be used to access BookStack [${DEFAULT_IP}]: " SERVER_IP
 SERVER_IP="${SERVER_IP:-$DEFAULT_IP}"
 
-read -rp "Enter domain or FQDN for BookStack (or IP): " DOMAIN
+read -rp "Enter the URL or Hostname that will be used to access BookStack: " DOMAIN
 [ -n "$DOMAIN" ] || error_out "Domain or IP is required"
 
-info_msg "Using IP     : ${SERVER_IP}"
-info_msg "Using domain : ${DOMAIN}"
+info_msg "IP has been set to: $SERVER_IP"
+info_msg "URL has been set to: $DOMAIN"
+echo " --- "
 
 ############################################
-# PACKAGE INSTALLATION
+# [1/4] INSTALLING REQUIRED PACKAGES
 ############################################
-info_msg "[3/11] Installing packages"
+info_msg "[1/4] Installing Required Packages"
 {
-dnf install -y \
-  git nginx mariadb-server \
-  php php-cli php-fpm php-bcmath php-mbstring php-ldap \
-  php-xml php-gd php-mysqlnd php-pecl-zip \
-  policycoreutils-python-utils
+dnf install -y git nginx mariadb-server \
+php php-cli php-fpm php-bcmath php-mbstring php-ldap php-xml php-gd php-mysqlnd php-pecl-zip \
+policycoreutils-python-utils
+cd "$BOOKSTACK_DIR" 2>/dev/null || true
+php bookstack-system-cli download-vendor 2>/dev/null || true
 } >>"$LOGPATH" 2>&1
 
 ############################################
-# DATABASE SETUP
+# [2/4] INSTALLING AND CONFIGURING MARIADB
 ############################################
-info_msg "[4/11] Database setup"
+info_msg "[2/4] Installing and Configuring MariaDB"
 {
 systemctl enable --now mariadb
 sleep 3
@@ -91,29 +83,13 @@ EOF
 } >>"$LOGPATH" 2>&1
 
 ############################################
-# DOWNLOAD BOOKSTACK
+# [3/4] INSTALLING AND CONFIGURING BOOKSTACK
 ############################################
-info_msg "[5/11] Downloading BookStack"
+info_msg "[3/4] Installing and Configuring BookStack"
 {
 cd /var/www
-git clone https://source.bookstackapp.com/bookstack.git \
-  --branch release --single-branch bookstack
-} >>"$LOGPATH" 2>&1
+git clone https://source.bookstackapp.com/bookstack.git --branch release --single-branch bookstack
 
-############################################
-# PHP DEPENDENCIES
-############################################
-info_msg "[6/11] Installing PHP dependencies"
-{
-cd "$BOOKSTACK_DIR"
-php bookstack-system-cli download-vendor
-} >>"$LOGPATH" 2>&1
-
-############################################
-# ENV CONFIGURATION
-############################################
-info_msg "[7/11] Configuring environment"
-{
 cd "$BOOKSTACK_DIR"
 cp .env.example .env
 sed -i \
@@ -121,36 +97,16 @@ sed -i \
   -e "s|^DB_DATABASE=.*|DB_DATABASE=${DB_NAME}|" \
   -e "s|^DB_USERNAME=.*|DB_USERNAME=${DB_USER}|" \
   -e "s|^DB_PASSWORD=.*|DB_PASSWORD=${DB_PASS}|" .env
+
 php artisan key:generate --force --no-interaction
-} >>"$LOGPATH" 2>&1
-
-############################################
-# DATABASE MIGRATION
-############################################
-info_msg "[8/11] Database migration"
-{
-cd "$BOOKSTACK_DIR"
 php artisan migrate --force --no-interaction
-} >>"$LOGPATH" 2>&1
 
-############################################
-# PERMISSIONS
-############################################
-info_msg "[9/11] Permissions & ownership"
-{
-cd "$BOOKSTACK_DIR"
 chown -R apache:apache .
 chmod -R 755 .
 chmod -R 775 storage bootstrap/cache public/uploads
 chmod 740 .env
 git config core.fileMode false
-} >>"$LOGPATH" 2>&1
 
-############################################
-# NGINX CONFIGURATION
-############################################
-info_msg "[10/11] Nginx configuration"
-{
 cat >/etc/nginx/conf.d/bookstack.conf <<EOF
 server {
   listen 80;
@@ -169,13 +125,14 @@ server {
   }
 }
 EOF
+
 systemctl enable --now php-fpm nginx
 } >>"$LOGPATH" 2>&1
 
 ############################################
-# FIREWALL & SELINUX
+# [4/4] FIREWALL & SELINUX
 ############################################
-info_msg "[11/11] Firewall & SELinux"
+info_msg "[4/4] Creating allow rules on the firewall"
 {
 firewall-cmd --permanent --add-service=http
 firewall-cmd --reload
@@ -184,7 +141,6 @@ semanage fcontext -a -t httpd_sys_content_t "${BOOKSTACK_DIR}(/.*)?"
 semanage fcontext -a -t httpd_sys_rw_content_t "${BOOKSTACK_DIR}/storage(/.*)?"
 semanage fcontext -a -t httpd_sys_rw_content_t "${BOOKSTACK_DIR}/bootstrap/cache(/.*)?"
 semanage fcontext -a -t httpd_sys_rw_content_t "${BOOKSTACK_DIR}/public/uploads(/.*)?"
-
 restorecon -R "$BOOKSTACK_DIR"
 } >>"$LOGPATH" 2>&1
 
@@ -192,17 +148,18 @@ restorecon -R "$BOOKSTACK_DIR"
 # SAVE THIS INFO
 ############################################
 info_msg ""
-info_msg "================= SAVE THIS INFO ================="
-info_msg "Application : BookStack"
-info_msg "URL         : http://${DOMAIN}/"
-info_msg "Install dir : ${BOOKSTACK_DIR}"
-info_msg " ${MSG_USER_LOGIN} admin@admin.com"
-info_msg " ${MSG_USER_PASS} password"
-info_msg ""
-info_msg "DB name     : ${DB_NAME}"
-info_msg "DB user     : ${DB_USER}"
-info_msg "DB password : ${DB_PASS}"
-info_msg "Log file    : ${LOGPATH}"
-info_msg ""
+info_msg "=================================================================="
+info_msg " BookStack installation completed (SAVE THIS INFO)"
+info_msg "------------------------------------------------------------------"
+info_msg " Access via URL: http://${DOMAIN}"
+info_msg " Access via IP: http://${SERVER_IP}"
+info_msg " User:  Admin"
+info_msg " Pass:  password"
+info_msg "---"
+info_msg " Database name: ${DB_NAME}"
+info_msg " DB User: ${DB_USER}"
+info_msg " DB Pass: ${DB_PASS}"
+info_msg " Sensitive log file (delete after use): $LOGPATH"
+info_msg "=================================================================="
 info_msg "Based on Dan Brown's - Bookstack for Almalinux 10 Script"
-info_msg "=================================================="
+
