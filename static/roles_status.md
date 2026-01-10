@@ -15,6 +15,18 @@
 > [!NOTE]
 > AL stands for AlmaLinux
 
+By joining **Base** solutions and **Roles** you can build a **Cost effective IT infrastructure (COEFIT)** that solves your enterprise needs.
+
+## Base 
+
+|Solution      |Enterprise Needs                     |Format|
+|--------------|-------------------------------------|------|
+|Promox VE     | Virtualization                      |📀ISO |
+|Promox BS     | VM Backup Server                    |📀ISO |
+|Opnsense      | Gateway / VPN                       |📀ISO |
+|Issabel       | Telephony / Contact Center          |📀ISO |
+|Almalinux 10+ | Server / Workstation OS             |📀ISO |
+
 ## Roles
 
 | Roles            | Enterprise Needs                                                              | AL 10 |
