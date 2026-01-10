@@ -210,7 +210,8 @@ fi
 
 
 # --- EXTRA GRAB INSTALLED VERSION ---
-xversion=$(php artisan bookstack:version)
+cd "$BOOKSTACK_DIR" || exit
+XVERSION=$(cat version)
 
 
 # === SAVE THIS INFO ===
