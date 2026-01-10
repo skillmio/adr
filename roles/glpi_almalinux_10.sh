@@ -47,6 +47,7 @@ TMP_DIR="/tmp"
 INSTALL_DIR="/var/www/html/"
 DB_NAME="glpi"
 DB_USER="glpi"
+DB_PASS="$(tr -dc 'A-Za-z0-9#.$' </dev/urandom | head -c 24)"
 MYSQL_ROOT_PASS="$(tr -dc 'A-Za-z0-9#.$' </dev/urandom | head -c 24)"
 
 
