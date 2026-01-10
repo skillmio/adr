@@ -44,7 +44,7 @@ fi
 # === GLOBAL VARIABLES ===
 PORT=62300
 TMP_DIR="/tmp"
-INSTALL_DIR="/var/www/html/glpi"
+INSTALL_DIR="/var/www/html/"
 DB_NAME="glpi"
 DB_USER="glpi"
 MYSQL_ROOT_PASS="$(tr -dc 'A-Za-z0-9#.$' </dev/urandom | head -c 24)"
@@ -145,7 +145,7 @@ wget -P "$TMP_DIR" "https://github.com/glpi-project/glpi/releases/download/${ver
 
 
 # Installing 
-mkdir -p "${INSTALL_DIR}"
+#mkdir -p "${INSTALL_DIR}"
 sudo tar -xzf "$TMP_DIR/glpi-${version}.tgz" -C "${INSTALL_DIR}"
 sudo php /var/www/html/glpi/bin/console db:install \
   --db-host=localhost \
