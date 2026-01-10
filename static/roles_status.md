@@ -41,7 +41,7 @@ By joining **Base** solutions and **Roles** you can build a **[Cost effective IT
 | GLPI             | ITSM Server                                                                   | 🟢    |
 | Beszel           | Monitoring Server                                                             | 🟢    |
 | Zabbix           | Monitoring Server                                                             | 🟢    |
-| Bookstack        | Documentation Server                                                          | 🟡    |
+| Bookstack        | Documentation Server                                                          | 🟢    |
 | NextCloud HUB    | Collaboration Suite Server                                                    | 🟡    |
 | OpenCloud        | Collaboration & File Server                                                   | 🟡    |
 | Pi-hole          | DNS Filtering Server                                                          | 🟡    |
