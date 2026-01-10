@@ -88,11 +88,11 @@ dnf install -y \
   nc
 
 # SELinux 
-sed -i \
-  -e 's/^SELINUX=.*/SELINUX=enforcing/' \
-  -e 's/^SELINUXTYPE=.*/SELINUXTYPE=targeted/' \
-  /etc/selinux/config
-touch /.autorelabel
+#sed -i \
+#  -e 's/^SELINUX=.*/SELINUX=enforcing/' \
+#  -e 's/^SELINUXTYPE=.*/SELINUXTYPE=targeted/' \
+#  /etc/selinux/config
+#touch /.autorelabel
 
 # Update
 dnf update -y && dnf upgrade -y
