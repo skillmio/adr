@@ -12,8 +12,6 @@
 - 🟡 **Planned**
 - 🔴 **Not Supported**
 
-> [!NOTE]
-> AL stands for AlmaLinux
 
 By joining **Base** solutions and **Roles** you can build a **Cost effective IT infrastructure (COEFIT)** that solves your enterprise needs.
 
@@ -28,6 +26,9 @@ By joining **Base** solutions and **Roles** you can build a **Cost effective IT 
 |Almalinux 10+ | Server / Workstation OS             |📀ISO |
 
 ## Roles
+> [!NOTE]
+> AL stands for AlmaLinux
+
 
 | Roles            | Enterprise Needs                                                              | AL 10 |
 |------------------|-------------------------------------------------------------------------------|-------|
