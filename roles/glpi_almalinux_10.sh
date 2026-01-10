@@ -77,7 +77,7 @@ sudo dnf install -y epel-release
 sudo dnf install -y wget tar unzip net-tools bzip2 policycoreutils-python-utils httpd mod_ssl
 sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-10.rpm
 sudo dnf module reset php -y && sudo dnf module enable php:remi-8.5 -y 
-sudo dnf install -y php php-{mbstring,mysqli,xml,cli,ldap,openssl,xmlrpc,pecl-apcu,zip,curl,gd,json,session,imap,intl,zlib,redis}
+sudo dnf install -y php php-{mbstring,mysqli,xml,cli,ldap,openssl,xmlrpc,pecl-apcu,zip,curl,gd,json,session,imap,intl,zlib,redis,bcmath}
 
 } >>"$LOGPATH" 2>&1
 
