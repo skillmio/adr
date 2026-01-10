@@ -121,9 +121,9 @@ info_msg "[3/5] ${MSG_INSTALL_SOLUTION}"
 # Copy and update BookStack environment variables
   cd "$INSTALL_DIR" || exit
   cp .env.example .env
-  sed -i.bak "s@APP_URL=.*\$@APP_URL=http://$DOMAIN@" .env
-  sed -i.bak 's/DB_DATABASE=.*$/DB_DATABASE=bookstack/' .env
-  sed -i.bak 's/DB_USERNAME=.*$/DB_USERNAME=bookstack/' .env
+  sed -i.bak "s@APP_URL=.*\$@APP_URL=http://$SERVER_IP@" .env
+  sed -i.bak "s/DB_DATABASE=.*$/DB_DATABASE=$DB_NAME/" .env
+  sed -i.bak "s/DB_USERNAME=.*$/DB_USERNAME=$DB_USER/" .env
   sed -i.bak "s/DB_PASSWORD=.*\$/DB_PASSWORD=$DB_PASS/" .env
   # Generate the application key
   php artisan key:generate --no-interaction --force
