@@ -109,6 +109,7 @@ info_msg "[5/6] ${MSG_INSTALL_SOLUTION}"
   tar xzf latest.tar.gz
 
   sudo mv wordpress ${INSTALL_DIR}/
+  restorecon -Rv ${INSTALL_DIR}/wordpress
   sudo chown -R apache:apache ${INSTALL_DIR}/wordpress
   sudo find ${INSTALL_DIR}/wordpress -type d -exec chmod 755 {} \;
   sudo find ${INSTALL_DIR}/wordpress -type f -exec chmod 644 {} \;
