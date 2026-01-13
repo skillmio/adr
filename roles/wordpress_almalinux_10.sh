@@ -118,13 +118,15 @@ info_msg "[5/6] ${MSG_INSTALL_SOLUTION}"
   sudo systemctl restart httpd
 
   sudo dnf install -y policycoreutils-python-utils
-  sudo chcon -R -t httpd_sys_rw_content_t ${INSTALL_DIR}/wordpress
+  # sudo chcon -R -t httpd_sys_rw_content_t ${INSTALL_DIR}/wordpress #<-
+  sudo chcon -R -t httpd_sys_rw_content_t "${INSTALL_DIR}/wordpress/wp-content/uploads"
+  sudo chcon -R -t httpd_sys_rw_content_t "${INSTALL_DIR}/wordpress/wp-content/cache"
   sudo setsebool -P httpd_can_network_connect_db on
 
   sudo tee /etc/httpd/conf.d/wordpress.conf <<EOF
 <VirtualHost *:80>
-  ServerName ${SERVER_IP}
-  ServerAlias ${ACCESS_URL}
+  ServerName ${ACCESS_URL}
+  ServerAlias ${SERVER_IP}
   DocumentRoot ${INSTALL_DIR}/wordpress
   <Directory ${INSTALL_DIR}/wordpress>
     AllowOverride All
