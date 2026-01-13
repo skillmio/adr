@@ -137,7 +137,10 @@ info_msg "[5/6] ${MSG_INSTALL_SOLUTION}"
 </VirtualHost>
 EOF
 
-  sudo systemctl restart httpd
+echo "define('DISALLOW_FILE_EDIT', true);" | sudo tee -a ${INSTALL_DIR}/wordpress/wp-config.php
+sudo chmod 600 ${INSTALL_DIR}/wordpress/wp-config.php
+
+sudo systemctl restart httpd
 } >>"$LOGPATH" 2>&1
 
 # --- [6/6] ADJUSTING FIREWALL ---
