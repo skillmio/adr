@@ -144,8 +144,19 @@ info_msg "[5/6] ${MSG_INSTALL_SOLUTION}"
 </VirtualHost>
 EOF
 
+# Create wp-config
+sudo cp /var/www/html/wordpress/wp-config-sample.php \
+        /var/www/html/wordpress/wp-config.php
+
 echo "define('DISALLOW_FILE_EDIT', true);" | sudo tee -a ${INSTALL_DIR}/wordpress/wp-config.php
+
+# replace DB values
+sudo sed -i "s/database_name_here/${DB_NAME}/" wp-config.php
+sudo sed -i "s/username_here/${DB_USER}/" wp-config.php
+sudo sed -i "s/password_here/${DB_PASS}/" wp-config.php
+
 sudo chmod 600 ${INSTALL_DIR}/wordpress/wp-config.php
+
 
 sudo systemctl restart httpd
 } >>"$LOGPATH" 2>&1
