@@ -65,7 +65,7 @@ echo " --- "
 info_msg "[1/6] ${MSG_INSTALL_PREREQUISITES}"
 {
 sudo dnf install -y epel-release
-sudo dnf install -y wget curl tar   # ← added curl
+sudo dnf install -y wget curl tar policycoreutils-python-utils
 } >>"$LOGPATH" 2>&1
 
 # --- [2/6] INSTALLING MARIADB ---
@@ -115,14 +115,21 @@ info_msg "[5/6] ${MSG_INSTALL_SOLUTION}"
   sudo find ${INSTALL_DIR}/wordpress -type f -exec chmod 644 {} \;
 
   sudo sed -i 's/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf
-  sudo systemctl restart httpd
+    
+  # After moving and chowning wordpress
+ sudo mkdir -p ${INSTALL_DIR}/wordpress/wp-content/uploads
+ sudo chown -R apache:apache ${INSTALL_DIR}/wordpress/wp-content
+ sudo restorecon -Rv ${INSTALL_DIR}/wordpress
+ sudo setsebool -P httpd_can_network_connect_db on
 
-  sudo dnf install -y policycoreutils-python-utils
-  # sudo chcon -R -t httpd_sys_rw_content_t ${INSTALL_DIR}/wordpress #<-
-  sudo chcon -R -t httpd_sys_rw_content_t "${INSTALL_DIR}/wordpress/wp-content/uploads"
-  sudo chcon -R -t httpd_sys_rw_content_t "${INSTALL_DIR}/wordpress/wp-content/cache"
-  sudo setsebool -P httpd_can_network_connect_db on
+ # Then SELinux for writable dirs
+ sudo chcon -R -t httpd_sys_rw_content_t "${INSTALL_DIR}/wordpress/wp-content/uploads"
+ 
+ # Optionally cache directory if you use caching plugins
+ sudo mkdir -p ${INSTALL_DIR}/wordpress/wp-content/cache
+ sudo chcon -R -t httpd_sys_rw_content_t "${INSTALL_DIR}/wordpress/wp-content/cache"
 
+  # Import folder
   sudo tee /etc/httpd/conf.d/wordpress.conf <<EOF
 <VirtualHost *:80>
   ServerName ${ACCESS_URL}
