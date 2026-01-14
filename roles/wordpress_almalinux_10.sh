@@ -151,9 +151,9 @@ sudo cp /var/www/html/wordpress/wp-config-sample.php \
 echo "define('DISALLOW_FILE_EDIT', true);" | sudo tee -a ${INSTALL_DIR}/wordpress/wp-config.php
 
 # replace DB values
-sudo sed -i "s/database_name_here/${DB_NAME}/" wp-config.php
-sudo sed -i "s/username_here/${DB_USER}/" wp-config.php
-sudo sed -i "s/password_here/${DB_PASS}/" wp-config.php
+sudo sed -i "s/database_name_here/${DB_NAME}/"  ${INSTALL_DIR}/wordpress/wp-config.php
+sudo sed -i "s/username_here/${DB_USER}/"  ${INSTALL_DIR}/wordpress/wp-config.php
+sudo sed -i "s/password_here/${DB_PASS}/"  ${INSTALL_DIR}/wordpress/wp-config.php
 
 sudo chmod 600 ${INSTALL_DIR}/wordpress/wp-config.php
 
