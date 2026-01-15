@@ -10,7 +10,7 @@ set -e
 clear
 
 # Define Solution early (needed for LOGPATH)
-SOLUTION="Wordpress"
+SOLUTION="LAMP"
 
 # --- LOGGING ---
 LOGPATH="/tmp/${SOLUTION}_install_$(date +%s).log"
