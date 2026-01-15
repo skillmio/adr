@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==========================================================================
-# ADR's Wordpress installation script - AL10
+# ADR's Wordpress Stack installation script - AL10
 # ==========================================================================
 
 # === PREPARATIONS ===
@@ -61,76 +61,81 @@ info_msg "${MSG_USING_IP}: $SERVER_IP"
 info_msg "${MSG_USING_URL}: $ACCESS_URL"
 
 echo " --- "
-# --- [1/6] INSTALLING PREREQUISITES ---
-info_msg "[1/6] ${MSG_INSTALL_PREREQUISITES}"
+# --- [1/] INSTALLING PREREQUISITES ---
+info_msg "[1/] ${MSG_INSTALL_PREREQUISITES}"
 {
 sudo dnf install -y epel-release
-sudo dnf install -y wget curl tar policycoreutils-python-utils
+dnf config-manager --set-enabled crb #enable codereadybuilder
+sudo dnf install -y wget curl tar
 } >>"$LOGPATH" 2>&1
 
-# --- [2/6] INSTALLING MARIADB ---
-info_msg "[2/6] ${MSG_INSTALL_MARIADB}"
+# --- [2/] INSTALLING APACHE ---
+info_msg "[2/] ${MSG_INSTALL_APACHE}"
 {
-  sudo dnf install -y mariadb-server
-  sudo systemctl enable --now mariadb
+sudo dnf install -y httpd httpd-tools
+systemctl enable httpd
+systemctl start httpd
+systemctl status httpd
 
-  # use socket auth consistently before setting root password
-  sudo mysql -e "CREATE DATABASE ${DB_NAME} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-  sudo mysql -e "CREATE USER '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASS}';"
-  sudo mysql -e "GRANT ALL ON ${DB_NAME}.* TO '${DB_USER}'@'localhost'; FLUSH PRIVILEGES;"
-
-  sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASS}';"
-  sudo mysql -uroot -p"${MYSQL_ROOT_PASS}" -e "DELETE FROM mysql.user WHERE User='';"
-  sudo mysql -uroot -p"${MYSQL_ROOT_PASS}" -e "DROP DATABASE IF EXISTS test;"
-  sudo mysql -uroot -p"${MYSQL_ROOT_PASS}" -e "FLUSH PRIVILEGES;"
 } >>"$LOGPATH" 2>&1
 
-# --- [3/6] INSTALLING APACHE ---
-info_msg "[3/6] ${MSG_INSTALL_APACHE}"
+# --- [3/6] INSTALLING PHP ---
+info_msg "[3/] ${MSG_INSTALL_PHP}"
 {
-  sudo dnf install -y httpd
-  sudo systemctl enable --now httpd
+dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm
+dnf install -y https://rpms.remirepo.net/enterprise/remi-release-10.rpm
+dnf module switch-to php:remi-8.4
+dnf module install -y php:remi-8.4
+systemctl restart httpd 
+php -v
+
+# echo "<?php phpinfo() ?>" > /var/www/html/info.php # optional
+
 } >>"$LOGPATH" 2>&1
 
-# --- [4/6] INSTALLING PHP ---
-info_msg "[4/6] ${MSG_INSTALL_PHP}"
+# --- [4/5] INSTALLING MARIADB ---
+info_msg "[4/5] ${MSG_INSTALL_MARIADB}"
 {
-  sudo dnf install -y php php-mysqlnd php-gd php-xml php-mbstring \
-                     php-json php-curl php-zip php-intl
-  sudo systemctl restart httpd
-  php -v
+dnf install -y dnf install mariadb-server mariadb
+systemctl enable mariadb
+systemctl start mariadb
+systemctl status mariadb
+
+# use socket auth consistently before setting root password
+sudo mysql -e "CREATE DATABASE ${DB_NAME} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+sudo mysql -e "CREATE USER '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASS}';"
+sudo mysql -e "GRANT ALL ON ${DB_NAME}.* TO '${DB_USER}'@'localhost'; FLUSH PRIVILEGES;"
+
+sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASS}';"
+sudo mysql -uroot -p"${MYSQL_ROOT_PASS}" -e "DELETE FROM mysql.user WHERE User='';"
+sudo mysql -uroot -p"${MYSQL_ROOT_PASS}" -e "DROP DATABASE IF EXISTS test;"
+sudo mysql -uroot -p"${MYSQL_ROOT_PASS}" -e "FLUSH PRIVILEGES;"
+sudo mysql -uroot -p"${MYSQL_ROOT_PASS}" -e "SHOW DATABASES;"
+
 } >>"$LOGPATH" 2>&1
 
-# --- [5/6] INSTALLING WORDPRESS ---
-info_msg "[5/6] ${MSG_INSTALL_SOLUTION}"
+
+# --- [5/] INSTALLING WORDPRESS ---
+info_msg "[5/] ${MSG_INSTALL_SOLUTION}"
 {
-  cd /tmp
-  curl -O https://wordpress.org/latest.tar.gz
-  tar xzf latest.tar.gz
 
-  sudo mv wordpress ${INSTALL_DIR}/
-  restorecon -Rv ${INSTALL_DIR}/wordpress
-  sudo chown -R apache:apache ${INSTALL_DIR}/wordpress
-  sudo find ${INSTALL_DIR}/wordpress -type d -exec chmod 755 {} \;
-  sudo find ${INSTALL_DIR}/wordpress -type f -exec chmod 644 {} \;
-  sudo sed -i 's/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf
+#Download and copy
+cd "${TMP_DIR}"
+curl https://wordpress.org/latest.tar.gz --output wordpress.tar.gz
+tar xf wordpress.tar.gz
+cp -r wordpress /var/www/html
 
- if [ "$(getenforce 2>/dev/null)" = "Enforcing" ] || \
+#Permissions
+chown -R apache:apache /var/www/html/wordpress
+
+if [ "$(getenforce 2>/dev/null)" = "Enforcing" ] || \
    [ "$(getenforce 2>/dev/null)" = "Permissive" ]; then
-    # After moving and chowning wordpress
-   sudo mkdir -p ${INSTALL_DIR}/wordpress/wp-content/uploads
-   sudo chown -R apache:apache ${INSTALL_DIR}/wordpress/wp-content
-   sudo restorecon -Rv ${INSTALL_DIR}/wordpress
-   sudo setsebool -P httpd_can_network_connect_db on
-   # Then SELinux for writable dirs
-   sudo chcon -R -t httpd_sys_rw_content_t "${INSTALL_DIR}/wordpress/wp-content/uploads"
-    # Optionally cache directory if you use caching plugins
-   sudo mkdir -p ${INSTALL_DIR}/wordpress/wp-content/cache
-   sudo chcon -R -t httpd_sys_rw_content_t "${INSTALL_DIR}/wordpress/wp-content/cache"
-   fi
+chcon -t httpd_sys_rw_content_t /var/www/html/wordpress -R
+setsebool -P httpd_can_network_connect true
+fi
 
-  # Import folder
-  sudo tee /etc/httpd/conf.d/wordpress.conf <<EOF
+#Import wordpress code block
+sudo tee /etc/httpd/conf.d/wordpress.conf <<EOF
 <VirtualHost *:80>
   ServerName ${ACCESS_URL}
   ServerAlias ${SERVER_IP}
@@ -144,31 +149,7 @@ info_msg "[5/6] ${MSG_INSTALL_SOLUTION}"
 </VirtualHost>
 EOF
 
-# Create wp-config
-sudo cp /var/www/html/wordpress/wp-config-sample.php \
-        /var/www/html/wordpress/wp-config.php
-
-echo "define('DISALLOW_FILE_EDIT', true);" | sudo tee -a ${INSTALL_DIR}/wordpress/wp-config.php
-
-# replace DB values
-sudo sed -i "s/database_name_here/${DB_NAME}/"  ${INSTALL_DIR}/wordpress/wp-config.php
-sudo sed -i "s/username_here/${DB_USER}/"  ${INSTALL_DIR}/wordpress/wp-config.php
-sudo sed -i "s/password_here/${DB_PASS}/"  ${INSTALL_DIR}/wordpress/wp-config.php
-
-sudo chmod 600 ${INSTALL_DIR}/wordpress/wp-config.php
-
-
 sudo systemctl restart httpd
-} >>"$LOGPATH" 2>&1
-
-# --- [6/6] ADJUSTING FIREWALL ---
-info_msg "[6/6] ${MSG_FIREWALL}"
-{
-if systemctl is-active --quiet firewalld; then   # ← set -e safe
-  sudo firewall-cmd --permanent --add-service=http
-  sudo firewall-cmd --permanent --add-service=https
-  sudo firewall-cmd --reload
-fi
 } >>"$LOGPATH" 2>&1
 
 # --- EXTRA GRAB INSTALLED VERSION ---
