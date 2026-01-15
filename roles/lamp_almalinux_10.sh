@@ -93,7 +93,7 @@ php -v
 # --- [4/5] INSTALLING MARIADB ---
 info_msg "[4/5] ${MSG_INSTALL_MARIADB}"
 {
-dnf install -y dnf install mariadb-server mariadb
+dnf install -y mariadb-server mariadb
 systemctl enable mariadb
 systemctl start mariadb
 systemctl status mariadb
