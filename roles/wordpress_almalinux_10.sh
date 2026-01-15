@@ -84,8 +84,8 @@ info_msg "[3/6] ${MSG_INSTALL_PHP}"
 {
 dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm
 dnf install -y https://rpms.remirepo.net/enterprise/remi-release-10.rpm
-dnf module -y switch-to php:remi-8.4
-dnf module install -y php:remi-8.4
+dnf module -y switch-to php:remi-8.5
+dnf module install -y php:remi-8.5
 systemctl restart httpd 
 php -v
 
