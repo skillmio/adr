@@ -86,6 +86,7 @@ dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noar
 dnf install -y https://rpms.remirepo.net/enterprise/remi-release-10.rpm
 dnf module -y switch-to php:remi-8.5
 dnf module install -y php:remi-8.5
+dnf install -y php-{fpm,gd,json,mbstring,mysqlnd,xml,xmlrpc,opcache,cli,zip,soap,intl,bcmath,curl,ssh2}
 systemctl restart httpd 
 php -v
 
