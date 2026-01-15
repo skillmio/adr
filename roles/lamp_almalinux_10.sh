@@ -58,16 +58,16 @@ info_msg "${MSG_USING_IP}: $SERVER_IP"
 info_msg "${MSG_USING_URL}: $ACCESS_URL"
 
 echo " --- "
-# --- [1/4] INSTALLING PREREQUISITES ---
-info_msg "[1/4] ${MSG_INSTALL_PREREQUISITES}"
+# --- [1/5] INSTALLING PREREQUISITES ---
+info_msg "[1/5] ${MSG_INSTALL_PREREQUISITES}"
 {
 sudo dnf install -y epel-release
 dnf config-manager --set-enabled crb #enable codereadybuilder
 sudo dnf install -y wget curl tar
 } >>"$LOGPATH" 2>&1
 
-# --- [2/4] INSTALLING APACHE ---
-info_msg "[2/4] ${MSG_INSTALL_APACHE}"
+# --- [2/5] INSTALLING APACHE ---
+info_msg "[2/5] ${MSG_INSTALL_APACHE}"
 {
 sudo dnf install -y httpd httpd-tools
 systemctl enable httpd
@@ -76,8 +76,8 @@ systemctl status httpd
 
 } >>"$LOGPATH" 2>&1
 
-# --- [3/4] INSTALLING PHP ---
-info_msg "[3/4] ${MSG_INSTALL_PHP}"
+# --- [3/5] INSTALLING PHP ---
+info_msg "[3/5] ${MSG_INSTALL_PHP}"
 {
 dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm
 dnf install -y https://rpms.remirepo.net/enterprise/remi-release-10.rpm
@@ -90,8 +90,8 @@ php -v
 
 } >>"$LOGPATH" 2>&1
 
-# --- [4/4] INSTALLING MARIADB ---
-info_msg "[4/4] ${MSG_INSTALL_MARIADB}"
+# --- [4/5] INSTALLING MARIADB ---
+info_msg "[4/5] ${MSG_INSTALL_MARIADB}"
 {
 dnf install -y dnf install mariadb-server mariadb
 systemctl enable mariadb
@@ -107,6 +107,17 @@ sudo mysql -uroot -p"${MYSQL_ROOT_PASS}" -e "SHOW DATABASES;"
 
 } >>"$LOGPATH" 2>&1
 
+
+# --- [5/5] ADJUSTING FIREWALL ---
+info_msg "[5/5] ${MSG_FIREWALL}"
+{
+if systemctl is-active --quiet firewalld; then   # ← set -e safe
+  sudo firewall-cmd --permanent --add-service=http
+  sudo firewall-cmd --permanent --add-service=https
+  sudo firewall-cmd --permanent --add-port=${PORT}/tcp
+  sudo firewall-cmd --reload
+fi
+} >>"$LOGPATH" 2>&1
 
 # === SAVE THIS INFO ===
 echo ""
