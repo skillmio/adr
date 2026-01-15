@@ -35,6 +35,7 @@ By joining **Base** solutions and **Roles** you can build a **[Cost effective IT
 | Roles            | Enterprise Needs                                                              | AL 10 |
 |------------------|-------------------------------------------------------------------------------|-------|
 | Prep-LXC         | Proxmox AlmaLinux LXC provisioning for ADR                                    | 🟢    |
+| Lamp             | LAMP Stack (Linux, Apache, Mysql, php)                                        | 🟡    |
 | Wordpress        | Web Server                                                                    | 🟢    |
 | MariaDB          | Database Server                                                               | 🟢    |
 | PostgreSQL       | Database Server                                                               | 🟢    |
