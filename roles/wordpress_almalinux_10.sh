@@ -61,16 +61,16 @@ info_msg "${MSG_USING_IP}: $SERVER_IP"
 info_msg "${MSG_USING_URL}: $ACCESS_URL"
 
 echo " --- "
-# --- [1/] INSTALLING PREREQUISITES ---
-info_msg "[1/] ${MSG_INSTALL_PREREQUISITES}"
+# --- [1/6] INSTALLING PREREQUISITES ---
+info_msg "[1/6] ${MSG_INSTALL_PREREQUISITES}"
 {
 sudo dnf install -y epel-release
 dnf config-manager --set-enabled crb #enable codereadybuilder
 sudo dnf install -y wget curl tar
 } >>"$LOGPATH" 2>&1
 
-# --- [2/] INSTALLING APACHE ---
-info_msg "[2/] ${MSG_INSTALL_APACHE}"
+# --- [2/6] INSTALLING APACHE ---
+info_msg "[2/6] ${MSG_INSTALL_APACHE}"
 {
 sudo dnf install -y httpd httpd-tools
 systemctl enable httpd
@@ -80,7 +80,7 @@ systemctl status httpd
 } >>"$LOGPATH" 2>&1
 
 # --- [3/6] INSTALLING PHP ---
-info_msg "[3/] ${MSG_INSTALL_PHP}"
+info_msg "[3/6] ${MSG_INSTALL_PHP}"
 {
 dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm
 dnf install -y https://rpms.remirepo.net/enterprise/remi-release-10.rpm
@@ -93,8 +93,8 @@ php -v
 
 } >>"$LOGPATH" 2>&1
 
-# --- [4/5] INSTALLING MARIADB ---
-info_msg "[4/5] ${MSG_INSTALL_MARIADB}"
+# --- [4/6] INSTALLING MARIADB ---
+info_msg "[4/6] ${MSG_INSTALL_MARIADB}"
 {
 dnf install -y dnf install mariadb-server mariadb
 systemctl enable mariadb
@@ -115,8 +115,8 @@ sudo mysql -uroot -p"${MYSQL_ROOT_PASS}" -e "SHOW DATABASES;"
 } >>"$LOGPATH" 2>&1
 
 
-# --- [5/] INSTALLING WORDPRESS ---
-info_msg "[5/] ${MSG_INSTALL_SOLUTION}"
+# --- [5/6] INSTALLING WORDPRESS ---
+info_msg "[5/6] ${MSG_INSTALL_SOLUTION}"
 {
 
 #Download and copy
@@ -150,6 +150,18 @@ sudo tee /etc/httpd/conf.d/wordpress.conf <<EOF
 EOF
 
 sudo systemctl restart httpd
+} >>"$LOGPATH" 2>&1
+
+
+# --- [6/6] ADJUSTING FIREWALL ---
+info_msg "[6/6] ${MSG_FIREWALL}"
+{
+if systemctl is-active --quiet firewalld; then   # ← set -e safe
+  sudo firewall-cmd --permanent --add-service=http
+  sudo firewall-cmd --permanent --add-service=https
+  sudo firewall-cmd --permanent --add-port=${PORT}/tcp
+  sudo firewall-cmd --reload
+fi
 } >>"$LOGPATH" 2>&1
 
 # --- EXTRA GRAB INSTALLED VERSION ---
