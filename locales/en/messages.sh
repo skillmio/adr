@@ -65,5 +65,7 @@ MSG_DB_NAME=" Database name: "
 MSG_DB_USER=" DB User: "
 MSG_DB_PASS=" DB Pass: "
 MSG_DB_ROOT=" MariaDB root password: "
+MSG_SELECT_CONTAINER="Insert container mode: 1=normal, 2=template"
+MSG_SELECTED_CONTAINER="Container mode selected: "
 
 
