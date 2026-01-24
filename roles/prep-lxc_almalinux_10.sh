@@ -46,6 +46,28 @@ fi
 info_msg "${MSG_START}"
 info_msg "${MSG_LOGPATH}"
 
+# --- USER PROMPTS ---
+info_msg "${MSG_SELECT_CONTAINER}"
+
+read -p "Choice [1]: " CONTAINER_MODE
+CONTAINER_MODE=${CONTAINER_MODE:-1}
+
+case "$CONTAINER_MODE" in
+  1)
+    CONTAINER_TYPE="normal"
+    ;;
+  2)
+    CONTAINER_TYPE="template"
+    ;;
+  *)
+    echo "Invalid option. Exiting."
+    exit 1
+    ;;
+esac
+
+info_msg "${MSG_SELECTED_CONTAINER}${CONTAINER_TYPE}"
+
+
 echo " --- "
 # --- [1/4] INSTALLING PREREQUISITES ---
 info_msg "[1/1] ${MSG_INSTALL_PREREQUISITES}"
@@ -105,6 +127,36 @@ firewall-cmd --reload
 # SSH
 echo "PermitRootLogin yes" | tee /etc/ssh/sshd_config.d/permit_root.conf
 systemctl enable --now sshd
+
+
+if [[ "$CONTAINER_TYPE" == "template" ]]; then
+
+  # Clear logs
+  find /var/log -type f -exec truncate -s 0 {} \;
+
+  # Remove bash history
+  rm -f /root/.bash_history
+  find /home -name ".bash_history" -exec rm -f {} \;
+
+  # Clear shell history for current session
+  history -c
+
+  # Remove machine-id (will be regenerated)
+  truncate -s 0 /etc/machine-id
+  rm -f /var/lib/dbus/machine-id
+  ln -sf /etc/machine-id /var/lib/dbus/machine-id
+
+  # Clean package cache
+  dnf clean all
+  rm -rf /var/cache/dnf
+
+  # Remove temporary files
+  rm -rf /tmp/* /var/tmp/*
+
+  # Shutdown LXC
+  shutdown now
+
+fi
 
 # Reboot LXC
 reboot now
