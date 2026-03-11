@@ -1,5 +1,6 @@
 <div align="right">
 
+[![committers.top badge](https://user-badge.committers.top/angola/skillmio.svg)](https://user-badge.committers.top/angola/skillmio)
 [![EN](https://img.shields.io/badge/lang-EN-blue)](README.md)
 [![FR](https://img.shields.io/badge/lang-FR-blue)](static/README.fr.md)
 [![PT](https://img.shields.io/badge/lang-PT-blue)](static/README.pt.md)
